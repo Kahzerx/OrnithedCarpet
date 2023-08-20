@@ -18,7 +18,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Messenger {
-	public static final Logger LOG = LogManager.getLogger();
+	public static final Logger LOG = LogManager.getLogger("Messaging System");
 	public enum CarpetFormatting {
 		ITALIC      ('i', (s, f) -> s.setItalic(true)),
 		STRIKE      ('s', (s, f) -> s.setStrikethrough(true)),

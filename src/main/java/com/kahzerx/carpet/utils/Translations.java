@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.kahzerx.carpet.CarpetExtension;
 import com.kahzerx.carpet.CarpetServer;
+import com.kahzerx.carpet.CarpetSettings;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;

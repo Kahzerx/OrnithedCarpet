@@ -1,15 +1,17 @@
 package com.kahzerx.carpet.api.settings;
 
+import com.kahzerx.carpet.CarpetSettings;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.source.CommandSourceStack;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class SettingsManager {
-	private final Map<String, CarpetRule<?>> rules = new HashMap<>();
+	private final Map<String, Rule> rules = new HashMap<>();
 	private final String version;
 	private final String identifier;
 	private final String fancyName;
@@ -43,6 +45,16 @@ public class SettingsManager {
 
 	public boolean locked() {
 		return this.locked;
+	}
+
+	public void parseSettingsClass(Class<CarpetSettings> settingsClass) {
+		for (Field f : settingsClass.getDeclaredFields()) {
+			Rule rule = f.getAnnotation(Rule.class);
+			if (rule == null) {
+				continue;
+			}
+			rules.put(rule.name(), rule);
+		}
 	}
 
 	static class ConfigReadResult {

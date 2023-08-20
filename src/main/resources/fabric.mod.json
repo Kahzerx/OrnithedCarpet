@@ -14,7 +14,14 @@
 	"license": "CC0-1.0",
 	"icon": "assets/ornithe_carpet/icon.png",
 	"environment": "*",
-	"entrypoints": { },
+	"entrypoints": {
+      "client": [
+        "com.kahzerx.carpet.CarpetServer::onGameStarted"
+      ],
+      "server": [
+        "com.kahzerx.carpet.CarpetServer::onGameStarted"
+      ]
+    },
 	"mixins": [
       "ornithe_carpet.mixins.json"
 	],
