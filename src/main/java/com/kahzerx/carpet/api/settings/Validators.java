@@ -9,7 +9,7 @@ public final class Validators {
 	private Validators() {}
 
 	public static class CommandLevel extends Validator<String> {
-		private static final List<String> OPTIONS = Arrays.asList("true", "false", "ops", "0", "1", "2", "3", "4");
+		public static final List<String> OPTIONS = Arrays.asList("true", "false", "ops", "0", "1", "2", "3", "4");
 		@Override
 		public String validate(CommandSourceStack source, CarpetRule<String> currentRule, String newValue, String userString) {
 			if (!OPTIONS.contains(newValue)) {
