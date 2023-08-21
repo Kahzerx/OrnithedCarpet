@@ -218,7 +218,7 @@ public class SettingsManager {
 		stream.forEach((listItem) -> {
 			// Regex camelCase Search
 			List<String> words = Arrays.stream(listItem.split("(?<!^)(?=[A-Z])")).map(s -> s.toLowerCase(Locale.ROOT)).collect(Collectors.toList());
-			List<String> prefixes = new ArrayList<String>(words.size());
+			List<String> prefixes = new ArrayList<>(words.size());
 			for (int i = 0; i < words.size(); i++)
 				prefixes.add(String.join("", words.subList(i, words.size())));
 			if (prefixes.stream().anyMatch(s -> s.startsWith(query))) {

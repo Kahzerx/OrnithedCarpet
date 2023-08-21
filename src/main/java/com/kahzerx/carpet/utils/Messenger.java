@@ -129,7 +129,7 @@ public class Messenger {
 		Style previousStyle = previousMessage.getStyle();
 		BaseText ret = previousMessage;
 		switch (desc.charAt(0)) {
-			case '?':
+			case '?':  // TODO this should be suggest
 			case '&':  // TODO this should be copy
 				previousMessage.setStyle(previousStyle.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, message.substring(1))));
 				break;

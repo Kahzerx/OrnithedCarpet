@@ -42,10 +42,10 @@ public final class ParsedRule<T> implements CarpetRule<T>, Comparable<ParsedRule
 		Map.Entry<Class<Float>, FromStringConverter<Float>> floatConverter = simpleConverter(Float.class, Float::parseFloat);
 		converter.put(stringConverter.getKey(), stringConverter.getValue());
 		converter.put(boolConverter.getKey(), boolConverter.getValue());
-		converter.put(intConverter.getKey(), boolConverter.getValue());
-		converter.put(doubleConverter.getKey(), boolConverter.getValue());
-		converter.put(longConverter.getKey(), boolConverter.getValue());
-		converter.put(floatConverter.getKey(), boolConverter.getValue());
+		converter.put(intConverter.getKey(), intConverter.getValue());
+		converter.put(doubleConverter.getKey(), doubleConverter.getValue());
+		converter.put(longConverter.getKey(), longConverter.getValue());
+		converter.put(floatConverter.getKey(), floatConverter.getValue());
 		return converter;
 	}
 
@@ -174,6 +174,7 @@ public final class ParsedRule<T> implements CarpetRule<T>, Comparable<ParsedRule
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public T value() {
 		try {
 			return (T) this.field.get(null);
