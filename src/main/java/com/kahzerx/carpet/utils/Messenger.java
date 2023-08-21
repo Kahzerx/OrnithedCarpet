@@ -144,7 +144,7 @@ public class Messenger {
 				break;
 			default:
 				ret = new LiteralText(str);
-				ret.setStyle(parseStyle(str));
+				ret.setStyle(parseStyle(desc));
 				previousMessage.setStyle(previousStyle);
 				break;
 		}
@@ -247,7 +247,9 @@ public class Messenger {
 			}
 			String txt = o.toString();
 			BaseText comp = getChatComponentFromDesc(txt, previousComponent);
-			if (comp != previousComponent) message.append(comp);
+			if (comp != previousComponent) {
+				message.append(comp);
+			}
 			previousComponent = comp;
 		}
 		return message;
