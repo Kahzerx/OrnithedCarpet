@@ -8,8 +8,7 @@ import net.minecraft.server.command.source.CommandSourceStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static com.kahzerx.carpet.api.settings.RuleCategory.CREATIVE;
-import static com.kahzerx.carpet.api.settings.RuleCategory.FEATURE;
+import static com.kahzerx.carpet.api.settings.RuleCategory.*;
 
 public class CarpetSettings {
 	public static final String carpetVersion = "1.0.0";
@@ -17,7 +16,8 @@ public class CarpetSettings {
 	public static final Logger LOG = LogManager.getLogger("carpet");
 
 	private static class LanguageValidator extends Validator<String> {
-		@Override public String validate(CommandSourceStack source, CarpetRule<String> currentRule, String newValue, String string) {
+		@Override
+		public String validate(CommandSourceStack source, CarpetRule<String> currentRule, String newValue, String string) {
 			CarpetSettings.language = newValue;
 			Translations.updateLanguage();
 			return newValue;
@@ -52,4 +52,33 @@ public class CarpetSettings {
 			options = {"ops", "2", "4"}
 	)
 	public static String carpetCommandPermissionLevel = "ops";
+
+	private static class OneHourMaxDelayLimit extends Validator<Integer> {
+		@Override
+		public Integer validate(CommandSourceStack source, CarpetRule<Integer> currentRule, Integer newValue, String string) {
+			System.out.println(newValue > 0 && newValue <= 72000);
+			return (newValue > 0 && newValue <= 72000) ? newValue : null;
+		}
+
+		@Override
+		public String description() {
+			return "You must choose a value from 1 to 72000";
+		}
+	}
+	@Rule(
+			desc = "Amount of delay ticks to use a nether portal in creative",
+			options = {"1", "40", "80", "72000"},
+			categories = CREATIVE,
+			strict = false,
+			validators = OneHourMaxDelayLimit.class
+	)
+	public static int portalCreativeDelay = 1;
+	@Rule(
+			desc = "Amount of delay ticks to use a nether portal in survival",
+			options = {"1", "40", "80", "72000"},
+			categories = SURVIVAL,
+			strict = false,
+			validators = OneHourMaxDelayLimit.class
+	)
+	public static int portalSurvivalDelay = 80;
 }

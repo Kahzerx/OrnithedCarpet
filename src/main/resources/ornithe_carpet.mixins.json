@@ -4,6 +4,7 @@
   "package": "com.kahzerx.carpet.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "rule.portalDelay.PlayerEntityMixin",
     "server.CommandsMixin"
   ],
   "client": [
@@ -12,5 +13,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-	}
+  }
 }
