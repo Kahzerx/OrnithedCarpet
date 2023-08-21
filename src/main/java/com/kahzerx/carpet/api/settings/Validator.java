@@ -11,8 +11,7 @@ public abstract class Validator<T> {
 		return null;
 	}
 
-	public void notifyFailure(CommandSourceStack source, CarpetRule<T> currentRule, String providedValue)
-	{
+	public void notifyFailure(CommandSourceStack source, CarpetRule<T> currentRule, String providedValue) {
 		Messenger.m(source, "r Wrong value for " + currentRule.name() + ": " + providedValue);
 		if (description() != null) {
 			Messenger.m(source, "r " + description());

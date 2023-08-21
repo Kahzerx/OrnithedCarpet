@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 public final class ParsedRule<T> implements CarpetRule<T>, Comparable<ParsedRule<?>> {
 	private final String name;
+	private final String desc;
 	private final List<Text> extraInfo;
 	private final List<String> categories;
 	private final List<String> options;
@@ -49,7 +50,8 @@ public final class ParsedRule<T> implements CarpetRule<T>, Comparable<ParsedRule
 	}
 
 	public ParsedRule(Field field, Rule rule, SettingsManager settingsManager) {
-		this.name = rule.name();
+		this.name = field.getName();
+		this.desc = rule.desc();
 		this.field = field;
 		String extraPrefix = String.format(TranslationKeys.RULE_EXTRA_PREFIX_PATTERN, settingsManager.identifier(), name());
 		this.extraInfo = getTranslationArray(extraPrefix);
@@ -144,6 +146,11 @@ public final class ParsedRule<T> implements CarpetRule<T>, Comparable<ParsedRule
 	@Override
 	public String name() {
 		return this.name;
+	}
+
+	@Override
+	public String desc() {
+		return this.desc;
 	}
 
 	@Override

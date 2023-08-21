@@ -16,9 +16,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Messenger {
 	public static final Logger LOG = LogManager.getLogger("Messaging System");
+	private static final Pattern colorExtract = Pattern.compile("#([0-9a-fA-F]{6})");
 	public enum CarpetFormatting {
 		ITALIC      ('i', (s, f) -> s.setItalic(true)),
 		STRIKE      ('s', (s, f) -> s.setStrikethrough(true)),
@@ -40,7 +43,15 @@ public class Messenger {
 		DARK_AQUA   ('q', (s, f) -> s.setColor(Formatting.DARK_AQUA)),
 		DARK_GREEN  ('e', (s, f) -> s.setColor(Formatting.DARK_GREEN)),
 		DARK_BLUE   ('v', (s, f) -> s.setColor(Formatting.DARK_BLUE)), // navy
-		BLACK       ('k', (s, f) -> s.setColor(Formatting.BLACK));
+		BLACK       ('k', (s, f) -> s.setColor(Formatting.BLACK)),
+		COLOR       ('#', (s, f) -> {
+//			Formatting color = Formatting.parseColor("#"+f);
+//			return color == null ? s : s.setColor(color);
+			return s;
+		}, s -> {
+			Matcher m = colorExtract.matcher(s);
+			return m.find() ? m.group(1) : null;
+		});
 
 		public final char code;
 		public final BiFunction<Style, String, Style> applier;
@@ -96,8 +107,7 @@ public class Messenger {
 		}
 	}
 
-	private static BaseText getChatComponentFromDesc(String message, BaseText previousMessage)
-	{
+	private static BaseText getChatComponentFromDesc(String message, BaseText previousMessage) {
 		if (message.equalsIgnoreCase("")) {
 			return new LiteralText("");
 		}
@@ -120,6 +130,7 @@ public class Messenger {
 		BaseText ret = previousMessage;
 		switch (desc.charAt(0)) {
 			case '?':
+			case '&':  // TODO this should be copy
 				previousMessage.setStyle(previousStyle.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, message.substring(1))));
 				break;
 			case '!':

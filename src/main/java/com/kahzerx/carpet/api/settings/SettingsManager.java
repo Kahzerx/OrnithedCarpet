@@ -5,10 +5,10 @@ import com.kahzerx.carpet.CarpetSettings;
 import com.kahzerx.carpet.utils.CommandHelper;
 import com.kahzerx.carpet.utils.Messenger;
 import com.kahzerx.carpet.utils.TranslationKeys;
+import com.kahzerx.carpet.utils.Translations;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
@@ -66,6 +66,7 @@ public class SettingsManager {
 	}
 
 	public void parseSettingsClass(Class<CarpetSettings> settingsClass) {
+		Translations.updateLanguage();
 		for (Field f : settingsClass.getDeclaredFields()) {
 			Rule rule = f.getAnnotation(Rule.class);
 			if (rule == null) {
@@ -162,7 +163,7 @@ public class SettingsManager {
 		return rules.get(name);
 	}
 
-	private int displayRuleMenu(CommandSourceStack source, CarpetRule<?> rule) {  //TODO check if there's dupe code around options buttons
+	private int displayRuleMenu(CommandSourceStack source, CarpetRule<?> rule) {  // TODO check if there's dupe code around options buttons
 		String displayName = RuleHelper.translatedName(rule);
 
 		Messenger.m(source, "");
@@ -287,15 +288,13 @@ public class SettingsManager {
 		String displayName = RuleHelper.translatedName(rule);
 		List<Object> args = new ArrayList<>();
 		args.add("w - "+ displayName +" ");
-		args.add("!/"+identifier+" "+rule.name());
-		args.add("^y "+RuleHelper.translatedDescription(rule));
-		for (String option: rule.suggestions())
-		{
+		args.add("!/"+identifier+" " + rule.name());
+		args.add("^y " + RuleHelper.translatedDescription(rule));
+		for (String option: rule.suggestions()) {
 			args.add(makeSetRuleButton(rule, option, true));
 			args.add("w  ");
 		}
-		if (!rule.suggestions().contains(RuleHelper.toRuleString(rule.value())))
-		{
+		if (!rule.suggestions().contains(RuleHelper.toRuleString(rule.value()))) {
 			args.add(makeSetRuleButton(rule, RuleHelper.toRuleString(rule.value()), true));
 			args.add("w  ");
 		}
@@ -305,15 +304,16 @@ public class SettingsManager {
 
 	private Text makeSetRuleButton(CarpetRule<?> rule, String option, boolean brackets) {
 		String style = RuleHelper.isInDefaultValue(rule)?"g":(option.equalsIgnoreCase(RuleHelper.toRuleString(rule.defaultValue()))?"e":"y");
-		if (option.equalsIgnoreCase(RuleHelper.toRuleString(rule.value())))
-		{
+		if (option.equalsIgnoreCase(RuleHelper.toRuleString(rule.value()))) {
 			style = style + "u";
-			if (option.equalsIgnoreCase(RuleHelper.toRuleString(rule.defaultValue())))
+			if (option.equalsIgnoreCase(RuleHelper.toRuleString(rule.defaultValue()))) {
 				style = style + "b";
+			}
 		}
 		String component = style + (brackets ? " [" : " ") + option + (brackets ? "]" : "");
-		if (option.equalsIgnoreCase(RuleHelper.toRuleString(rule.value())))
+		if (option.equalsIgnoreCase(RuleHelper.toRuleString(rule.value()))) {
 			return Messenger.c(component);
+		}
 		return Messenger.c(component, "^g "+ String.format(tr(TranslationKeys.SWITCH_TO), option + (option.equals(RuleHelper.toRuleString(rule.defaultValue())) ? " (default)" : "")), "?/" + identifier + " " + rule.name() + " " + option);
 	}
 

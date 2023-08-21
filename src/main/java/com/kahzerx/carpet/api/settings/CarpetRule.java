@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface CarpetRule<T> {
 	String name();
+	String desc();
 	List<Text> extraInfo();
 	Collection<String> categories();
 	Collection<String> suggestions();

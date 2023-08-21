@@ -32,9 +32,11 @@ public class CarpetSettings {
 	public static String language = "en_us";
 
 	private static class CarpetPermissionLevel extends Validator<String> {
-		@Override public String validate(CommandSourceStack source, CarpetRule<String> currentRule, String newValue, String string) {
-			if (source == null || source.hasPermissions(4))
+		@Override
+		public String validate(CommandSourceStack source, CarpetRule<String> currentRule, String newValue, String string) {
+			if (source == null || source.hasPermissions(4)) {
 				return newValue;
+			}
 			return null;
 		}
 
@@ -44,7 +46,7 @@ public class CarpetSettings {
 		}
 	}
 	@Rule(
-			desc = "Carpet command permission level. Can only be set via .conf file",
+			desc = "Carpet command permission level",
 			categories = CREATIVE,
 			validators = CarpetPermissionLevel.class,
 			options = {"ops", "2", "4"}

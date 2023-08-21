@@ -38,7 +38,7 @@ public final class RuleHelper {
 	}
 
 	public static String translatedDescription(CarpetRule<?> rule) {
-		return Translations.tr(String.format(TranslationKeys.RULE_DESC_PATTERN, rule.settingsManager().identifier(), rule.name()));
+		return Translations.tr(String.format(TranslationKeys.RULE_DESC_PATTERN, rule.settingsManager().identifier(), rule.name()), rule.desc());
 	}
 
 	public static String translatedCategory(String manager, String category) {

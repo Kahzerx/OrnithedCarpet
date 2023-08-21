@@ -49,7 +49,7 @@ public class Translations {
 
     public static void updateLanguage() {
         Map<String, String> translations = new HashMap<>();
-        translations.putAll(getTranslationFromResourcePath(String.format("assets/carpet/lang/%s.json", CarpetSettings.language)));
+        translations.putAll(getTranslationFromResourcePath(String.format("assets/ornithe_carpet/lang/%s.json", CarpetSettings.language)));
 
         for (CarpetExtension ext : CarpetServer.extensions) {
             Map<String, String> extMappings = ext.canHasTranslations(CarpetSettings.language);
@@ -84,14 +84,6 @@ public class Translations {
             } else
                 return false;
         });
-        // Remove after deprecated settings api is removed
-        addFallbacksTo(translations);
         translationMap = translations;
-    }
-
-	private static final Map<String, String> FALLBACKS = new HashMap<>();
-
-    private static void addFallbacksTo(Map<String, String> translationMap) {
-        FALLBACKS.forEach(translationMap::putIfAbsent);
     }
 }
