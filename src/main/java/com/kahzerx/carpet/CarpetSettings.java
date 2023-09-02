@@ -81,4 +81,7 @@ public class CarpetSettings {
 			validators = OneHourMaxDelayLimit.class
 	)
 	public static int portalSurvivalDelay = 80;
+
+	@Rule(desc = "Parrots don't get of your shoulders until you receive proper damage", categories = {SURVIVAL, FEATURE})
+	public static boolean persistentParrots = false;
 }

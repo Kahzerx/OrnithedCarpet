@@ -4,6 +4,7 @@
   "package": "com.kahzerx.carpet.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "rule.persistentParrots.PlayerEntityMixin",
     "rule.portalDelay.PlayerEntityMixin",
     "server.CommandsMixin"
   ],
