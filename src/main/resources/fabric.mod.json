@@ -15,18 +15,18 @@
 	"icon": "assets/ornithe_carpet/icon.png",
 	"environment": "*",
 	"entrypoints": {
-      "client": [
-        "com.kahzerx.carpet.CarpetServer::onGameStarted"
-      ],
-      "server": [
-        "com.kahzerx.carpet.CarpetServer::onGameStarted"
-      ]
-    },
+		"init": [
+			"com.kahzerx.carpet.CarpetServer::onGameStarted"
+		]
+	},
 	"mixins": [
-      "ornithe_carpet.mixins.json"
+		"ornithe_carpet.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.14.22",
-		"minecraft": "1.13.2"
+		"minecraft": "1.13.2",
+		"osl-entrypoints": ">=0.4.0",
+		"osl-lifecycle-events": ">=0.5.0",
+		"osl-networking": ">=0.5.0"
 	}
 }

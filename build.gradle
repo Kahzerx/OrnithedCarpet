@@ -20,10 +20,10 @@ repositories {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.layered {
-		mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_build}:v2"
-	}
+	mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_build}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	ploceus.dependOsl(project.osl_version)
 }
 
 processResources {
