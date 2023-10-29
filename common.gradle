@@ -1,0 +1,115 @@
+apply plugin: 'maven-publish'
+apply plugin: 'fabric-loom'
+apply plugin: 'ploceus'
+apply plugin: 'com.replaymod.preprocess'
+
+int mcVersion = project.mcVersion
+
+preprocess {
+	tabIndentation = false
+}
+
+repositories {
+	maven {
+		name = 'Fabric'
+		url = 'https://maven.fabricmc.net/'
+	}
+	maven {
+		name = 'Ornithe Releases'
+		url = 'https://maven.ornithemc.net/releases'
+	}
+	maven {
+		name = 'Ornithe Snapshots'
+		url = 'https://maven.ornithemc.net/snapshots'
+	}
+	maven {
+		name = 'Jitpack'
+		url = "https://jitpack.io"
+	}
+}
+
+configurations {
+	modRuntimeOnly.exclude group: 'net.fabricmc', module: 'fabric-loader'
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	if (mcVersion < 10802) {
+		mappings loom.layered {
+			mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_build}"
+			addLayer ploceus.nestedMappings()
+		}
+		nests "net.ornithemc:nests:${project.minecraft_version}+build.${project.nests_build}"
+	} else {
+		mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_build}"
+	}
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+}
+
+loom {
+	runConfigs.configureEach {
+		// to make sure it generates all "Minecraft Client (:subproject_name)" applications
+		ideConfigGenerated = true
+		runDir '../../run'
+		vmArgs '-Dmixin.debug.export=true'
+	}
+}
+
+remapJar {
+	remapperIsolation = true
+}
+
+group = project.maven_group
+if (System.getenv("JITPACK") == "true") {
+	// move mc version into archivesBaseName, so jitpack will be able to organize archives from multiple subprojects correctly
+	base.archivesName = project.archives_base_name + '-mc' + project.minecraft_version
+	version = 'v' + mod_version
+} else {
+	base.archivesName = project.archives_base_name
+	version = 'mc' + project.minecraft_version + '-v' + mod_version
+}
+
+processResources {
+	inputs.property 'id', project.mod_id
+	inputs.property 'name', project.mod_name
+	inputs.property 'version', project.mod_version
+	inputs.property 'minecraft_dependency', project.minecraft_dependency
+
+	filesMatching('fabric.mod.json') {
+		expand([
+			'id': project.mod_id,
+			'name': project.mod_name,
+		    'version': project.mod_version,
+			'minecraft_dependency': project.minecraft_dependency
+		])
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = 'UTF-8'
+	it.options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+
+	withSourcesJar()
+}
+
+jar {
+	from(rootProject.file('LICENSE')) {
+		rename { "${it}_${base.archivesName.get()}" }
+	}
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			artifactId base.archivesName.get()
+			from components.java
+		}
+	}
+
+	repositories { }
+}

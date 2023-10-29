@@ -1,78 +1,52 @@
 plugins {
 	id 'maven-publish'
-	id 'fabric-loom' version '1.3-SNAPSHOT'
-	id 'ploceus' version '1.3-SNAPSHOT'
+	id 'fabric-loom' version '1.4-SNAPSHOT' apply false
+	id 'ploceus' version '1.4-SNAPSHOT' apply false
+	// https://github.com/ReplayMod/preprocessor
+	// https://github.com/Fallen-Breath/preprocessor
+	id 'com.replaymod.preprocess' version '20c7ec554a'
 }
 
-base {
-	archivesName = project.archives_base_name
-}
-version = "${project.version}+mc${project.minecraft_version}"
-group = project.maven_group
+preprocess {
+	def mc106 = createNode('1.6.4', 1_06_04, 'yarn')
+	def mc107 = createNode('1.7.10', 1_07_10, 'yarn')
+	def mc108 = createNode('1.8.9', 1_08_09, 'yarn')
+	def mc109 = createNode('1.9.4', 1_09_04, 'yarn')
+	def mc110 = createNode('1.10.2', 1_10_02, 'yarn')
+	def mc111 = createNode('1.11.2', 1_11_02, 'yarn')
+	def mc112 = createNode('1.12.2', 1_12_02, 'yarn')
+	def mc113 = createNode('1.13.2', 1_13_02, 'yarn')  // root
 
-repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
-}
-
-dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_build}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	ploceus.dependOsl(project.osl_version)
+	mc106.link(mc107, null)
+	mc107.link(mc108, null)
+	mc108.link(mc109, null)
+	mc109.link(mc110, null)
+	mc110.link(mc111, null)
+	mc111.link(mc112, null)
+	mc112.link(mc113, null)
 }
 
-processResources {
-	inputs.property 'version', version
-
-	filesMatching('fabric.mod.json') {
-		expand 'version': version
+tasks.register('buildAndGather') {
+	subprojects {
+		dependsOn project.tasks.named('build').get()
 	}
-}
-
-tasks.withType(JavaCompile).configureEach {
-	it.options.encoding = 'UTF-8'
-	it.options.release = 8
-}
-
-java {
-	// Still required by IDEs such as Eclipse and Visual Studio Code
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
-
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
-
-	// If this mod is going to be a library, then it should also generate Javadocs in order to aid with development.
-	// Uncomment this line to generate them.
-	// withJavadocJar()
-}
-
-// If you plan to use a different file for the license, don't forget to change the file name here!
-jar {
-	from('LICENSE') {
-		rename { "${it}_${base.archivesName.get()}" }
-	}
-}
-
-// Configure the maven publication
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			from components.java
+	doFirst {
+		println 'Gathering builds'
+		def buildLibs = {
+			p -> p.buildDir.toPath().resolve('libs')
 		}
-	}
-
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
+		delete fileTree(buildLibs(rootProject)) {
+			include '*'
+		}
+		subprojects {
+			copy {
+				from(buildLibs(project)) {
+					include '*.jar'
+					exclude '*-dev.jar', '*-sources.jar'
+				}
+				into buildLibs(rootProject)
+				duplicatesStrategy DuplicatesStrategy.INCLUDE
+			}
+		}
 	}
 }

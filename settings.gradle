@@ -12,6 +12,39 @@ pluginManagement {
 			name = 'Ornithe Snapshots'
 			url = 'https://maven.ornithemc.net/snapshots'
 		}
+		maven {
+			name = 'Jitpack'
+			url = "https://jitpack.io"
+		}
+		mavenCentral()
 		gradlePluginPortal()
 	}
+	resolutionStrategy {
+		eachPlugin {
+			switch (requested.id.id) {
+				case "com.replaymod.preprocess": {
+					useModule("com.github.Fallen-Breath:preprocessor:${requested.version}")
+					break
+				}
+			}
+		}
+	}
+}
+
+def versions = Arrays.asList(
+	"1.6.4",
+	"1.7.10",
+	"1.8.9",
+	"1.9.4",
+	"1.10.2",
+	"1.11.2",
+	"1.12.2",
+	"1.13.2"
+)
+for (String version : versions) {
+	include(":$version")
+
+	def proj = project(":$version")
+	proj.projectDir = file("versions/$version")
+	proj.buildFileName = "../../common.gradle"
 }
