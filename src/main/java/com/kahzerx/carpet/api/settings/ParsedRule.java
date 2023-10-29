@@ -93,7 +93,7 @@ public final class ParsedRule<T> implements CarpetRule<T>, Comparable<ParsedRule
 		this.settingsManager = settingsManager;
 		List<Validator<T>> tempValidators = Stream.of(rule.validators()).map(this::instantiateValidator).collect(Collectors.toList());
 		if (categories.contains(RuleCategory.COMMAND)) {
-			tempValidators.add(new Validator._COMMAND<T>());
+			tempValidators.add(new Validator._COMMAND<>());
 			if (type == String.class) {
 				tempValidators.add(instantiateValidator(Validators.CommandLevel.class));
 			}

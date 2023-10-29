@@ -228,7 +228,11 @@ public class Messenger {
 	//message source
 	public static void m(CommandSourceStack source, Object ... fields) {
 		if (source != null) {
+			//#if MC>=11300
 			source.sendSuccess(Messenger.c(fields), source.getServer() != null && source.getServer().getWorld(DimensionType.OVERWORLD) != null);
+			//#else
+			//$$ source.sendMessage(Messenger.c(fields));
+			//#endif
 		}
 	}
 
@@ -266,16 +270,21 @@ public class Messenger {
 	}
 
 	public static void send(PlayerEntity player, Collection<Text> lines) {
-		lines.forEach(message -> player.sendMessage(message));
+		lines.forEach(player::sendMessage);
 	}
 
 	public static void send(CommandSourceStack source, Collection<Text> lines) {
-		lines.stream().forEachOrdered((s) -> source.sendSuccess(s, false));
+		//#if MC>=11300
+		lines.forEach((s) -> source.sendSuccess(s, false));
+		//#else
+		//$$ lines.forEach(source::sendMessage);
+		//#endif
 	}
 
 	public static void printServerMessage(MinecraftServer server, String message) {
 		if (server == null) {
 			LOG.error("Message not delivered: "+message);
+			return;
 		}
 		server.sendMessage(new LiteralText(message));
 		Text txt = c("gi "+message);
@@ -286,7 +295,12 @@ public class Messenger {
 
 	public static void printServerMessage(MinecraftServer server, Text message) {
 		if (server == null) {
+			//#if MC>=11300
 			LOG.error("Message not delivered: "+message.getString());
+			//#else
+			//$$ LOG.error("Message not delivered: "+message.getContent());
+			//#endif
+			return;
 		}
 		server.sendMessage(message);
 		for (PlayerEntity entityplayer : server.getPlayerManager().getAll()) {

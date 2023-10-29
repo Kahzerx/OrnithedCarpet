@@ -34,7 +34,11 @@ public class CarpetSettings {
 	private static class CarpetPermissionLevel extends Validator<String> {
 		@Override
 		public String validate(CommandSourceStack source, CarpetRule<String> currentRule, String newValue, String string) {
+			//#if MC>=11300
 			if (source == null || source.hasPermissions(4)) {
+			//#else
+			//$$ if (source == null || source.canUseCommand(4, source.getName())) {
+			//#endif
 				return newValue;
 			}
 			return null;
@@ -82,6 +86,8 @@ public class CarpetSettings {
 	)
 	public static int portalSurvivalDelay = 80;
 
+	//#if MC>=11200
 	@Rule(desc = "Parrots don't get of your shoulders until you receive proper damage", categories = {SURVIVAL, FEATURE})
 	public static boolean persistentParrots = false;
+	//#endif
 }

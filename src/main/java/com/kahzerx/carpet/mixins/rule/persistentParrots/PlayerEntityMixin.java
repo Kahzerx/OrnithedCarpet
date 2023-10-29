@@ -1,10 +1,13 @@
 package com.kahzerx.carpet.mixins.rule.persistentParrots;
 
+import net.minecraft.entity.living.player.PlayerEntity;
+//#if MC>=11200
 import com.kahzerx.carpet.CarpetSettings;
+//#if MC>=11300
 import net.minecraft.entity.EntityType;
+//#endif
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.living.LivingEntity;
-import net.minecraft.entity.living.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -16,9 +19,15 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 	@Shadow
 	protected abstract void dropShoulderEntities();
 
+//#if MC>=11300
 	protected PlayerEntityMixin(EntityType<?> entityType, World world) {
 		super(entityType, world);
 	}
+//#else
+//$$ 	public PlayerEntityMixin(World world) {
+//$$		super(world);
+//$$	}
+//#endif
 
 	@Redirect(method = "tickAI", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/living/player/PlayerEntity;dropShoulderEntities()V"))
 	private void onTickMovement(PlayerEntity instance) {
@@ -36,3 +45,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 		}
 	}
 }
+//#else
+//$$ @Mixin(PlayerEntity.class)
+//$$ public class PlayerEntityMixin {}
+//#endif

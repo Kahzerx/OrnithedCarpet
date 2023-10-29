@@ -6,6 +6,7 @@ import com.kahzerx.carpet.utils.CommandHelper;
 import com.kahzerx.carpet.utils.Messenger;
 import com.kahzerx.carpet.utils.TranslationKeys;
 import com.kahzerx.carpet.utils.Translations;
+//#if MC>=11300
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -14,6 +15,11 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+//#else
+//$$ import net.minecraft.server.command.AbstractCommand;
+//$$ import net.minecraft.server.command.exception.CommandException;
+//$$ import net.minecraft.server.command.source.CommandSource;
+//#endif
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.handler.CommandManager;
 import net.minecraft.server.command.source.CommandSourceStack;
@@ -77,6 +83,7 @@ public class SettingsManager {
 		}
 	}
 
+	//#if MC>=11300
 	public void registerCommand(final CommandDispatcher<CommandSourceStack> dispatcher) {
 		if (dispatcher.getRoot().getChildren().stream().anyMatch(node -> node.getName().equalsIgnoreCase(this.identifier))) {
 			CarpetSettings.LOG.error("Failed to add settings command for " + this.identifier + ". It is masking previous command.");
@@ -127,6 +134,7 @@ public class SettingsManager {
 		});
 		return suggestionsBuilder.buildFuture();
 	}
+	//#endif
 
 	private boolean matchesSubStr(String string, String string2) {
 		for(int i = 0; !string2.startsWith(string, i); ++i) {
@@ -150,6 +158,7 @@ public class SettingsManager {
 		return 1;
 	}
 
+	//#if MC>=11300
 	private CarpetRule<?> contextRule(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
 		String ruleName = StringArgumentType.getString(ctx, "rule");
 		CarpetRule<?> rule = getCarpetRule(ruleName);
@@ -158,6 +167,7 @@ public class SettingsManager {
 		}
 		return rule;
 	}
+	//#endif
 
 	public CarpetRule<?> getCarpetRule(String name) {
 		return rules.get(name);
@@ -211,6 +221,7 @@ public class SettingsManager {
 		}).sorted(comparing(CarpetRule::name)).collect(Collectors.toList());
 	}
 
+	//#if MC>=11300
 	private CompletableFuture<Suggestions> suggestMatchingContains(Stream<String> stream, SuggestionsBuilder suggestionsBuilder) {
 		List<String> regularSuggestionList = new ArrayList<>();
 		List<String> smartSuggestionList = new ArrayList<>();
@@ -234,6 +245,7 @@ public class SettingsManager {
 		filteredSuggestionList.forEach(suggestionsBuilder::suggest);
 		return suggestionsBuilder.buildFuture();
 	}
+	//#endif
 
 	private int listAllSettings(CommandSourceStack source) {
 		int count = listSettings(source, String.format(tr(TranslationKeys.CURRENT_SETTINGS_HEADER), fancyName), getNonDefault());
@@ -339,4 +351,28 @@ public class SettingsManager {
 			return locked;
 		}
 	}
+
+	//#if MC<=11202
+	//$$ public static class CarpetCommand extends AbstractCommand {
+	//$$	@Override
+	//$$	public String getName() {
+	//$$		return "carpet";
+	//$$	}
+	//$$
+	//$$	@Override
+	//$$	public String getUsage(CommandSource commandSource) {
+	//$$		return "carpet <rule> <value>";
+	//$$	}
+	//$$
+	//$$	@Override
+	//$$	public void run(MinecraftServer minecraftServer, CommandSource commandSource, String[] strings) throws CommandException {
+	//$$
+	//$$	}
+	//$$
+	//$$	@Override
+	//$$	public boolean canUse(MinecraftServer minecraftServer, CommandSource commandSource) {
+	//$$		return CommandHelper.canUseCommand(commandSource, CarpetSettings.carpetCommandPermissionLevel);
+	//$$	}
+	//$$ }
+	//#endif
 }
