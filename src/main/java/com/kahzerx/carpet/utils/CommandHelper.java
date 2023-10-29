@@ -44,6 +44,7 @@ public class CommandHelper {
 		}
 	}
 
+	//#if MC>=11300
 	public static void notifyPlayersCommandsChanged(MinecraftServer server) {
 		if (server == null || server.getPlayerManager().getAll() == null) {
 			return;
@@ -51,13 +52,12 @@ public class CommandHelper {
 		server.submit(() -> {
 			try {
 				for (ServerPlayerEntity player : server.getPlayerManager().getAll()) {
-					//#if MC>=11300
 					server.getCommandHandler().sendCommands(player);
-					//#endif
 				}
 			} catch (NullPointerException e) {
 				CarpetSettings.LOG.warn("Exception while refreshing commands, please report this to Carpet", e);
 			}
 		});
 	}
+	//#endif
 }

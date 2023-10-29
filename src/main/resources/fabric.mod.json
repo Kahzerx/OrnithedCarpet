@@ -15,10 +15,7 @@
 	"icon": "assets/ornithe_carpet/icon.png",
 	"environment": "*",
 	"entrypoints": {
-    "client": [
-      "com.kahzerx.carpet.CarpetServer::onGameStarted"
-    ],
-    "server": [
+    "preLaunch": [
       "com.kahzerx.carpet.CarpetServer::onGameStarted"
     ]
 	},

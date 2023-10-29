@@ -15,10 +15,16 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 //#else
 //$$ import net.minecraft.server.command.AbstractCommand;
 //$$ import net.minecraft.server.command.exception.CommandException;
 //$$ import net.minecraft.server.command.source.CommandSource;
+//#endif
+//#if MC<=10710
+//$$ import net.minecraft.server.command.Command;
+//$$ import org.jetbrains.annotations.NotNull;
 //#endif
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.handler.CommandManager;
@@ -31,9 +37,7 @@ import net.minecraft.text.Text;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.kahzerx.carpet.utils.Translations.tr;
 import static java.util.Comparator.comparing;
@@ -409,6 +413,13 @@ public class SettingsManager {
 		//#endif
 	//$$		return CommandHelper.canUseCommand(commandSource, CarpetSettings.carpetCommandPermissionLevel);
 	//$$	}
+	//$$
+		//#if MC<=10710
+		//$$ @Override
+		//$$ public int compareTo(@NotNull Object o) {
+		//$$ 	return this.compareTo((Command) o);
+		//$$ }
+		//#endif
 	//$$ }
 	//#endif
 }

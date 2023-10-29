@@ -162,7 +162,11 @@ public class Messenger {
 	}
 
 	public static Text tp(String desc, BlockPos pos) {
+		//#if MC>10710
 		return tp(desc, pos.getX(), pos.getY(), pos.getZ());
+		//#else
+		//$$ return tp(desc, pos.x, pos.y, pos.z);
+		//#endif
 	}
 
 	public static Text tp(String desc, double x, double y, double z) {
@@ -301,8 +305,14 @@ public class Messenger {
 		}
 		server.sendMessage(new LiteralText(message));
 		Text txt = c("gi "+message);
-		for (PlayerEntity entityplayer : server.getPlayerManager().getAll()) {
-			entityplayer.sendMessage(txt);
+
+		//#if MC>10710
+		for (PlayerEntity playerEntity : server.getPlayerManager().getAll()) {
+			playerEntity.sendMessage(txt);
+		//#else
+		//$$ for (Object playerEntity : server.getPlayerManager().players) {
+		//$$ 	((PlayerEntity) playerEntity).sendMessage(txt);
+		//#endif
 		}
 	}
 
@@ -316,8 +326,13 @@ public class Messenger {
 			return;
 		}
 		server.sendMessage(message);
-		for (PlayerEntity entityplayer : server.getPlayerManager().getAll()) {
-			entityplayer.sendMessage(message);
+		//#if MC>10710
+		for (PlayerEntity playerEntity : server.getPlayerManager().getAll()) {
+			playerEntity.sendMessage(message);
+		//#else
+		//$$ for (Object playerEntity : server.getPlayerManager().players) {
+		//$$ 	((PlayerEntity) playerEntity).sendMessage(message);
+		//#endif
 		}
 	}
 }

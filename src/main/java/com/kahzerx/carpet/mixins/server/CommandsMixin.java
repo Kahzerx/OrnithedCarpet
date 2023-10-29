@@ -30,8 +30,11 @@ public class CommandsMixin {
 	//#if MC>=11300
 	private void onRegister(boolean isDedicatedServer, CallbackInfo ci) {
 		CarpetServer.registerCarpetCommands(this.dispatcher);
-	//#else
+	//#elseif MC>10809
 	//$$ private void onRegister(MinecraftServer server, CallbackInfo ci) {
+	//$$	CarpetServer.registerCarpetCommands((CommandRegistry) (Object) this);
+	//#else
+	//$$ private void onRegister(CallbackInfo ci) {
 	//$$	CarpetServer.registerCarpetCommands((CommandRegistry) (Object) this);
 	//#endif
 	}
