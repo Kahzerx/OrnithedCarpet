@@ -3,7 +3,11 @@ package com.kahzerx.carpet.utils;
 import net.minecraft.entity.living.mob.MobCategory;
 import net.minecraft.entity.living.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+//#if MC>=11200
 import net.minecraft.server.command.source.CommandSourceStack;
+//#else
+//$$ import net.minecraft.server.command.source.CommandSource;
+//#endif
 import net.minecraft.text.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -225,8 +229,11 @@ public class Messenger {
 		return c(text, command);
 	}
 
-	//message source
+	//#if MC>=11200
 	public static void m(CommandSourceStack source, Object ... fields) {
+	//#else
+	//$$ public static void m(CommandSource source, Object ... fields) {
+	//#endif
 		if (source != null) {
 			//#if MC>=11300
 			source.sendSuccess(Messenger.c(fields), source.getServer() != null && source.getServer().getWorld(DimensionType.OVERWORLD) != null);
@@ -273,7 +280,11 @@ public class Messenger {
 		lines.forEach(player::sendMessage);
 	}
 
+	//#if MC>=11200
 	public static void send(CommandSourceStack source, Collection<Text> lines) {
+	//#else
+	//$$ public static void send(CommandSource source, Collection<Text> lines) {
+	//#endif
 		//#if MC>=11300
 		lines.forEach((s) -> source.sendSuccess(s, false));
 		//#else

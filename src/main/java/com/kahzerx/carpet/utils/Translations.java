@@ -43,7 +43,7 @@ public class Translations {
             // we don't have that language
             return Collections.emptyMap();
         }
-        Gson gson = new GsonBuilder().setLenient().create();
+        Gson gson = new GsonBuilder().create();
 		return gson.fromJson(new InputStreamReader(langFile, StandardCharsets.UTF_8), new TypeToken<Map<String, String>>(){}.getType());
     }
 

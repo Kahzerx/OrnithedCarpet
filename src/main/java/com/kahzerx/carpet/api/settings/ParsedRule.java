@@ -2,7 +2,11 @@ package com.kahzerx.carpet.api.settings;
 
 import com.kahzerx.carpet.utils.TranslationKeys;
 import com.kahzerx.carpet.utils.Translations;
+//#if MC>=11200
 import net.minecraft.server.command.source.CommandSourceStack;
+//#else
+//$$ import net.minecraft.server.command.source.CommandSource;
+//#endif
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.ClassUtils;
@@ -200,12 +204,20 @@ public final class ParsedRule<T> implements CarpetRule<T>, Comparable<ParsedRule
 	}
 
 	@Override
+	//#if MC>=11200
 	public void set(CommandSourceStack source, String value) throws InvalidRuleValueException {
+	//#else
+	//$$ public void set(CommandSource source, String value) throws InvalidRuleValueException {
+	//#endif
 		set(source, converter.convert(value), value);
 	}
 
 	@Override
+	//#if MC>=11200
 	public void set(CommandSourceStack source, T value) throws InvalidRuleValueException {
+	//#else
+	//$$ public void set(CommandSource source, T value) throws InvalidRuleValueException {
+	//#endif
 		set(source, value, RuleHelper.toRuleString(value));
 	}
 
@@ -214,7 +226,11 @@ public final class ParsedRule<T> implements CarpetRule<T>, Comparable<ParsedRule
 		return !validators.isEmpty() && validators.get(0) instanceof Validator.StrictValidator;
 	}
 
+	//#if MC>=11200
 	private void set(CommandSourceStack source, T value, String userInput) throws InvalidRuleValueException {
+	//#else
+	//$$ private void set(CommandSource source, T value, String userInput) throws InvalidRuleValueException {
+	//#endif
 		for (Validator<T> validator : this.validators) {
 			value = validator.validate(source, this, value, userInput); // should this recalculate the string? Another validator may have changed value
 			if (value == null) {

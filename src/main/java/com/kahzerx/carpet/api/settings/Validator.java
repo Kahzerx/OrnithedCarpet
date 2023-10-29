@@ -2,16 +2,28 @@ package com.kahzerx.carpet.api.settings;
 
 import com.kahzerx.carpet.utils.CommandHelper;
 import com.kahzerx.carpet.utils.Messenger;
+//#if MC>=11200
 import net.minecraft.server.command.source.CommandSourceStack;
+//#else
+//$$ import net.minecraft.server.command.source.CommandSource;
+//#endif
 
 public abstract class Validator<T> {
+	//#if MC>=11200
 	public abstract T validate(CommandSourceStack source, CarpetRule<T> changingRule, T newValue, String userInput);
+	//#else
+	//$$ public abstract T validate(CommandSource source, CarpetRule<T> changingRule, T newValue, String userInput);
+	//#endif
 
 	public String description() {
 		return null;
 	}
 
+	//#if MC>=11200
 	public void notifyFailure(CommandSourceStack source, CarpetRule<T> currentRule, String providedValue) {
+	//#else
+	//$$ public void notifyFailure(CommandSource source, CarpetRule<T> currentRule, String providedValue) {
+	//#endif
 		Messenger.m(source, "r Wrong value for " + currentRule.name() + ": " + providedValue);
 		if (description() != null) {
 			Messenger.m(source, "r " + description());
@@ -20,7 +32,11 @@ public abstract class Validator<T> {
 
 	static class _COMMAND<T> extends Validator<T> {
 		@Override
+		//#if MC>=11200
 		public T validate(CommandSourceStack source, CarpetRule<T> currentRule, T newValue, String string) {
+		//#else
+		//$$ public T validate(CommandSource source, CarpetRule<T> currentRule, T newValue, String string) {
+		//#endif
 			if (source != null) {
 				CommandHelper.notifyPlayersCommandsChanged(source.getServer());
 			}
@@ -33,7 +49,11 @@ public abstract class Validator<T> {
 	// maybe remove this one and make printRulesToLog check for canBeToggledClientSide instead
 	static class _CLIENT<T> extends Validator<T> {
 		@Override
+		//#if MC>=11200
 		public T validate(CommandSourceStack source, CarpetRule<T> currentRule, T newValue, String string) {
+		//#else
+		//$$ public T validate(CommandSource source, CarpetRule<T> currentRule, T newValue, String string) {
+		//#endif
 			return newValue;
 		}
 		@Override
@@ -44,7 +64,11 @@ public abstract class Validator<T> {
 
 	static class StrictValidator<T> extends Validator<T> {
 		@Override
+		//#if MC>=11200
 		public T validate(CommandSourceStack source, CarpetRule<T> currentRule, T newValue, String string) {
+		//#else
+		//$$ public T validate(CommandSource source, CarpetRule<T> currentRule, T newValue, String string) {
+		//#endif
 			if (!currentRule.suggestions().contains(string)) {
 				Messenger.m(source, "r Valid options: " + currentRule.suggestions().toString());
 				return null;

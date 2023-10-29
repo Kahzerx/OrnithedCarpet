@@ -22,7 +22,11 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 //#endif
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.handler.CommandManager;
+//#if MC>=11200
 import net.minecraft.server.command.source.CommandSourceStack;
+//#else
+//$$ import net.minecraft.server.command.source.CommandSource;
+//#endif
 import net.minecraft.text.Text;
 
 import java.lang.reflect.Field;
@@ -52,7 +56,11 @@ public class SettingsManager {
 
 	@FunctionalInterface
 	public interface RuleObserver {
+		//#if MC>=11200
 		void ruleChanged(CommandSourceStack source, CarpetRule<?> changedRule, String userInput);
+		//#else
+		//$$ void ruleChanged(CommandSource source, CarpetRule<?> changedRule, String userInput);
+		//#endif
 	}
 
 	public void registerRuleObserver(RuleObserver observer) {
@@ -146,7 +154,11 @@ public class SettingsManager {
 		return true;
 	}
 
+	//#if MC>=11200
 	private int setRule(CommandSourceStack source, CarpetRule<?> rule, String newValue) {
+	//#else
+	//$$ private int setRule(CommandSource source, CarpetRule<?> rule, String newValue) {
+	//#endif
 		try {
 			rule.set(source, newValue);
 			Messenger.m(source, "w "+ rule +", ", "c ["+ tr(TranslationKeys.CHANGE_PERMANENTLY)+"?]",
@@ -173,7 +185,11 @@ public class SettingsManager {
 		return rules.get(name);
 	}
 
+	//#if MC>=11200
 	private int displayRuleMenu(CommandSourceStack source, CarpetRule<?> rule) {  // TODO check if there's dupe code around options buttons
+	//#else
+	//$$ private int displayRuleMenu(CommandSource source, CarpetRule<?> rule) {  // TODO check if there's dupe code around options buttons
+	//#endif
 		String displayName = RuleHelper.translatedName(rule);
 
 		Messenger.m(source, "");
@@ -247,7 +263,11 @@ public class SettingsManager {
 	}
 	//#endif
 
+	//#if MC>=11200
 	private int listAllSettings(CommandSourceStack source) {
+	//#else
+	//$$ private int listAllSettings(CommandSource source) {
+	//#endif
 		int count = listSettings(source, String.format(tr(TranslationKeys.CURRENT_SETTINGS_HEADER), fancyName), getNonDefault());
 
 		if (version != null) {
@@ -290,7 +310,11 @@ public class SettingsManager {
 		return rules.values().stream().filter(r -> !RuleHelper.isInDefaultValue(r)).sorted().collect(Collectors.toList());
 	}
 
+	//#if MC>=11200
 	private int listSettings(CommandSourceStack source, String title, Collection<CarpetRule<?>> settings_list) {
+	//#else
+	//$$ private int listSettings(CommandSource source, String title, Collection<CarpetRule<?>> settings_list) {
+	//#endif
 		Messenger.m(source,String.format("wb %s:",title));
 		settings_list.forEach(e -> Messenger.m(source, displayInteractiveSetting(e)));
 		return settings_list.size();
@@ -329,7 +353,11 @@ public class SettingsManager {
 		return Messenger.c(component, "^g "+ String.format(tr(TranslationKeys.SWITCH_TO), option + (option.equals(RuleHelper.toRuleString(rule.defaultValue())) ? " (default)" : "")), "?/" + identifier + " " + rule.name() + " " + option);
 	}
 
+	//#if MC>=11200
 	public void notifyRuleChanged(CommandSourceStack source, CarpetRule<?> rule, String userInput) {
+	//#else
+	//$$ public void notifyRuleChanged(CommandSource source, CarpetRule<?> rule, String userInput) {
+	//#endif
 		observers.forEach(observer -> observer.ruleChanged(source, rule, userInput));
 		staticObservers.forEach(observer -> observer.ruleChanged(source, rule, userInput));
 //		ServerNetworkHandler.updateRuleWithConnectedClients(rule);  // TODO
@@ -353,7 +381,7 @@ public class SettingsManager {
 	}
 
 	//#if MC<=11202
-	//$$ public static class CarpetCommand extends AbstractCommand {
+	//$$ public static class CarpetCommand extends AbstractCommand {  // TODO
 	//$$	@Override
 	//$$	public String getName() {
 	//$$		return "carpet";

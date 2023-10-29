@@ -4,7 +4,11 @@ import com.kahzerx.carpet.api.settings.CarpetRule;
 import com.kahzerx.carpet.api.settings.Rule;
 import com.kahzerx.carpet.api.settings.Validator;
 import com.kahzerx.carpet.utils.Translations;
+//#if MC>=11200
 import net.minecraft.server.command.source.CommandSourceStack;
+//#else
+//$$ import net.minecraft.server.command.source.CommandSource;
+//#endif
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,7 +21,11 @@ public class CarpetSettings {
 
 	private static class LanguageValidator extends Validator<String> {
 		@Override
+		//#if MC>=11200
 		public String validate(CommandSourceStack source, CarpetRule<String> currentRule, String newValue, String string) {
+		//#else
+		//$$ public String validate(CommandSource source, CarpetRule<String> currentRule, String newValue, String string) {
+		//#endif
 			CarpetSettings.language = newValue;
 			Translations.updateLanguage();
 			return newValue;
@@ -33,7 +41,11 @@ public class CarpetSettings {
 
 	private static class CarpetPermissionLevel extends Validator<String> {
 		@Override
+		//#if MC>=11200
 		public String validate(CommandSourceStack source, CarpetRule<String> currentRule, String newValue, String string) {
+		//#else
+		//$$ public String validate(CommandSource source, CarpetRule<String> currentRule, String newValue, String string) {
+		//#endif
 			//#if MC>=11300
 			if (source == null || source.hasPermissions(4)) {
 			//#else
@@ -59,8 +71,11 @@ public class CarpetSettings {
 
 	private static class OneHourMaxDelayLimit extends Validator<Integer> {
 		@Override
+		//#if MC>=11200
 		public Integer validate(CommandSourceStack source, CarpetRule<Integer> currentRule, Integer newValue, String string) {
-			System.out.println(newValue > 0 && newValue <= 72000);
+		//#else
+		//$$ public Integer validate(CommandSource source, CarpetRule<Integer> currentRule, Integer newValue, String string) {
+		//#endif
 			return (newValue > 0 && newValue <= 72000) ? newValue : null;
 		}
 

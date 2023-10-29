@@ -1,6 +1,7 @@
 package com.kahzerx.carpet.mixins.rule.persistentParrots;
 
 import net.minecraft.entity.living.player.PlayerEntity;
+import org.spongepowered.asm.mixin.Mixin;
 //#if MC>=11200
 import com.kahzerx.carpet.CarpetSettings;
 //#if MC>=11300
@@ -9,7 +10,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.living.LivingEntity;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
