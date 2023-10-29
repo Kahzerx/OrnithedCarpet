@@ -11,7 +11,9 @@ import net.minecraft.server.command.source.CommandSourceStack;
 import net.minecraft.text.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+//#if MC>=11300
 import net.minecraft.world.dimension.DimensionType;
+//#endif
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

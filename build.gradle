@@ -8,7 +8,6 @@ plugins {
 }
 
 preprocess {
-	def mc106 = createNode('1.6.4', 1_06_04, 'yarn')
 	def mc107 = createNode('1.7.10', 1_07_10, 'yarn')
 	def mc108 = createNode('1.8.9', 1_08_09, 'yarn')
 	def mc109 = createNode('1.9.4', 1_09_04, 'yarn')
@@ -17,7 +16,6 @@ preprocess {
 	def mc112 = createNode('1.12.2', 1_12_02, 'yarn')
 	def mc113 = createNode('1.13.2', 1_13_02, 'yarn')  // root
 
-	mc106.link(mc107, null)
 	mc107.link(mc108, null)
 	mc108.link(mc109, null)
 	mc109.link(mc110, null)

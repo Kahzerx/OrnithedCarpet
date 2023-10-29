@@ -393,12 +393,20 @@ public class SettingsManager {
 	//$$	}
 	//$$
 	//$$	@Override
+		//#if MC>10809
 	//$$	public void run(MinecraftServer minecraftServer, CommandSource commandSource, String[] strings) throws CommandException {
+		//#else
+		//$$ public void run(CommandSource commandSource, String[] strings) throws CommandException {
+		//#endif
 	//$$
 	//$$	}
 	//$$
 	//$$	@Override
+		//#if MC>10809
 	//$$	public boolean canUse(MinecraftServer minecraftServer, CommandSource commandSource) {
+		//#else
+		//$$ public boolean canUse(CommandSource commandSource) {
+		//#endif
 	//$$		return CommandHelper.canUseCommand(commandSource, CarpetSettings.carpetCommandPermissionLevel);
 	//$$	}
 	//$$ }

@@ -38,7 +38,9 @@ public abstract class Validator<T> {
 		//$$ public T validate(CommandSource source, CarpetRule<T> currentRule, T newValue, String string) {
 		//#endif
 			if (source != null) {
-				CommandHelper.notifyPlayersCommandsChanged(source.getServer());
+				//#if MC>=11300
+				CommandHelper.notifyPlayersCommandsChanged(source.getServer());  // TODO no need to notify with old command system? can't send command tree
+				//#endif
 			}
 			return newValue;
 		}
