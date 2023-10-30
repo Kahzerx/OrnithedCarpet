@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 //$$ import net.minecraft.server.command.AbstractCommand;
 //$$ import net.minecraft.server.command.exception.CommandException;
 //$$ import net.minecraft.server.command.source.CommandSource;
+//$$ import com.google.common.collect.Iterables;
 //#endif
 //#if MC<=10710
 //$$ import net.minecraft.server.command.Command;
@@ -28,15 +29,14 @@ import java.util.stream.Stream;
 //#endif
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.handler.CommandManager;
-//#if MC>=11200
-import net.minecraft.server.command.source.CommandSource;
+//#if MC>=11300
 import net.minecraft.server.command.source.CommandSourceStack;
 //#else
 //$$ import net.minecraft.server.command.source.CommandSource;
+//$$ import net.minecraft.util.math.BlockPos;
+//$$ import org.jetbrains.annotations.Nullable;
 //#endif
 import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -63,7 +63,7 @@ public class SettingsManager {
 
 	@FunctionalInterface
 	public interface RuleObserver {
-		//#if MC>=11200
+		//#if MC>=11300
 		void ruleChanged(CommandSourceStack source, CarpetRule<?> changedRule, String userInput);
 		//#else
 		//$$ void ruleChanged(CommandSource source, CarpetRule<?> changedRule, String userInput);
@@ -113,9 +113,7 @@ public class SettingsManager {
 						executes( (c) -> listSettings(c.getSource(), String.format(tr(TranslationKeys.ALL_MOD_SETTINGS), fancyName), getRulesSorted())).
 						then(CommandManager.argument("tag", StringArgumentType.word()).
 								suggests( (c, b)->suggest(getCategories(), b)).
-								executes( (c) -> listSettings(c.getSource(),
-										String.format(tr(TranslationKeys.MOD_SETTINGS_MATCHING), fancyName, RuleHelper.translatedCategory(identifier(),StringArgumentType.getString(c, "tag"))),
-										getRulesMatching(StringArgumentType.getString(c, "tag")))))).
+								executes( (c) -> listSettings(c.getSource(), String.format(tr(TranslationKeys.MOD_SETTINGS_MATCHING), fancyName, RuleHelper.translatedCategory(identifier(),StringArgumentType.getString(c, "tag"))), getRulesMatching(StringArgumentType.getString(c, "tag")))))).
 //				then(LiteralArgumentBuilder.literal("removeDefault").
 //						requires(s -> !locked()).
 //						then(RequiredArgumentBuilder.argument("rule", StringArgumentType.word()).
@@ -160,7 +158,7 @@ public class SettingsManager {
 		return true;
 	}
 
-	//#if MC>=11200
+	//#if MC>=11300
 	private int setRule(CommandSourceStack source, CarpetRule<?> rule, String newValue) {
 	//#else
 	//$$ private int setRule(CommandSource source, CarpetRule<?> rule, String newValue) {
@@ -191,7 +189,7 @@ public class SettingsManager {
 		return rules.get(name);
 	}
 
-	//#if MC>=11200
+	//#if MC>=11300
 	private int displayRuleMenu(CommandSourceStack source, CarpetRule<?> rule) {  // TODO check if there's dupe code around options buttons
 	//#else
 	//$$ private int displayRuleMenu(CommandSource source, CarpetRule<?> rule) {  // TODO check if there's dupe code around options buttons
@@ -359,7 +357,7 @@ public class SettingsManager {
 		return Messenger.c(component, "^g "+ String.format(tr(TranslationKeys.SWITCH_TO), option + (option.equals(RuleHelper.toRuleString(rule.defaultValue())) ? " (default)" : "")), "?/" + identifier + " " + rule.name() + " " + option);
 	}
 
-	//#if MC>=11200
+	//#if MC>=11300
 	public void notifyRuleChanged(CommandSourceStack source, CarpetRule<?> rule, String userInput) {
 	//#else
 	//$$ public void notifyRuleChanged(CommandSource source, CarpetRule<?> rule, String userInput) {
@@ -415,6 +413,9 @@ public class SettingsManager {
 	//$$		if (strings.length == 1 && "list".equalsIgnoreCase(strings[0])) {
 	//$$			this.sm.listSettings(commandSource, String.format(tr(TranslationKeys.ALL_MOD_SETTINGS), this.sm.fancyName), this.sm.getRulesSorted());
 	//$$		}
+	//$$		if (strings.length == 2 && "list".equalsIgnoreCase(strings[0]) && Iterables.contains(this.sm.getCategories(), strings[1])) {
+	//$$			this.sm.listSettings(commandSource, String.format(tr(TranslationKeys.MOD_SETTINGS_MATCHING), this.sm.fancyName, RuleHelper.translatedCategory(this.sm.identifier(), strings[1])), this.sm.getRulesMatching(strings[1]));
+	//$$		}
 	//$$	}
 	//$$
 	//$$	@Override
@@ -441,6 +442,11 @@ public class SettingsManager {
 	//$$			List<String> suggestions = new ArrayList<>();
 	//$$			suggestions.add("list");
 	//$$			return suggestions;
+	//$$		}
+	//$$		if (strings.length == 2 && strings[0].equalsIgnoreCase("list")) {
+	//$$			List<String> categories = new ArrayList<>();
+	//$$			this.sm.getCategories().forEach(categories::add);
+	//$$			return categories;
 	//$$		}
 	//$$		return Collections.emptyList();
 	//$$	}

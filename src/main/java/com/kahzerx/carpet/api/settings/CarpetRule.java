@@ -1,6 +1,6 @@
 package com.kahzerx.carpet.api.settings;
 
-//#if MC>=11200
+//#if MC>=11300
 import net.minecraft.server.command.source.CommandSourceStack;
 //#else
 //$$ import net.minecraft.server.command.source.CommandSource;
@@ -24,7 +24,7 @@ public interface CarpetRule<T> {
 	default boolean strict() {
 		return false;
 	}
-	//#if MC>=11200
+	//#if MC>=11300
 	void set(CommandSourceStack source, String value) throws InvalidRuleValueException;
 	void set(CommandSourceStack source, T value) throws InvalidRuleValueException;
 	//#else

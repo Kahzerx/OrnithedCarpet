@@ -2,7 +2,7 @@ package com.kahzerx.carpet.api.settings;
 
 import com.kahzerx.carpet.utils.TranslationKeys;
 import com.kahzerx.carpet.utils.Translations;
-//#if MC>=11200
+//#if MC>=11300
 import net.minecraft.server.command.source.CommandSourceStack;
 //#else
 //$$ import net.minecraft.server.command.source.CommandSource;
@@ -204,7 +204,7 @@ public final class ParsedRule<T> implements CarpetRule<T>, Comparable<ParsedRule
 	}
 
 	@Override
-	//#if MC>=11200
+	//#if MC>=11300
 	public void set(CommandSourceStack source, String value) throws InvalidRuleValueException {
 	//#else
 	//$$ public void set(CommandSource source, String value) throws InvalidRuleValueException {
@@ -213,7 +213,7 @@ public final class ParsedRule<T> implements CarpetRule<T>, Comparable<ParsedRule
 	}
 
 	@Override
-	//#if MC>=11200
+	//#if MC>=11300
 	public void set(CommandSourceStack source, T value) throws InvalidRuleValueException {
 	//#else
 	//$$ public void set(CommandSource source, T value) throws InvalidRuleValueException {
@@ -226,7 +226,7 @@ public final class ParsedRule<T> implements CarpetRule<T>, Comparable<ParsedRule
 		return !validators.isEmpty() && validators.get(0) instanceof Validator.StrictValidator;
 	}
 
-	//#if MC>=11200
+	//#if MC>=11300
 	private void set(CommandSourceStack source, T value, String userInput) throws InvalidRuleValueException {
 	//#else
 	//$$ private void set(CommandSource source, T value, String userInput) throws InvalidRuleValueException {

@@ -2,14 +2,14 @@ package com.kahzerx.carpet.api.settings;
 
 import com.kahzerx.carpet.utils.CommandHelper;
 import com.kahzerx.carpet.utils.Messenger;
-//#if MC>=11200
+//#if MC>=11300
 import net.minecraft.server.command.source.CommandSourceStack;
 //#else
 //$$ import net.minecraft.server.command.source.CommandSource;
 //#endif
 
 public abstract class Validator<T> {
-	//#if MC>=11200
+	//#if MC>=11300
 	public abstract T validate(CommandSourceStack source, CarpetRule<T> changingRule, T newValue, String userInput);
 	//#else
 	//$$ public abstract T validate(CommandSource source, CarpetRule<T> changingRule, T newValue, String userInput);
@@ -19,7 +19,7 @@ public abstract class Validator<T> {
 		return null;
 	}
 
-	//#if MC>=11200
+	//#if MC>=11300
 	public void notifyFailure(CommandSourceStack source, CarpetRule<T> currentRule, String providedValue) {
 	//#else
 	//$$ public void notifyFailure(CommandSource source, CarpetRule<T> currentRule, String providedValue) {
@@ -32,7 +32,7 @@ public abstract class Validator<T> {
 
 	static class _COMMAND<T> extends Validator<T> {
 		@Override
-		//#if MC>=11200
+		//#if MC>=11300
 		public T validate(CommandSourceStack source, CarpetRule<T> currentRule, T newValue, String string) {
 		//#else
 		//$$ public T validate(CommandSource source, CarpetRule<T> currentRule, T newValue, String string) {
@@ -51,7 +51,7 @@ public abstract class Validator<T> {
 	// maybe remove this one and make printRulesToLog check for canBeToggledClientSide instead
 	static class _CLIENT<T> extends Validator<T> {
 		@Override
-		//#if MC>=11200
+		//#if MC>=11300
 		public T validate(CommandSourceStack source, CarpetRule<T> currentRule, T newValue, String string) {
 		//#else
 		//$$ public T validate(CommandSource source, CarpetRule<T> currentRule, T newValue, String string) {
@@ -66,7 +66,7 @@ public abstract class Validator<T> {
 
 	static class StrictValidator<T> extends Validator<T> {
 		@Override
-		//#if MC>=11200
+		//#if MC>=11300
 		public T validate(CommandSourceStack source, CarpetRule<T> currentRule, T newValue, String string) {
 		//#else
 		//$$ public T validate(CommandSource source, CarpetRule<T> currentRule, T newValue, String string) {

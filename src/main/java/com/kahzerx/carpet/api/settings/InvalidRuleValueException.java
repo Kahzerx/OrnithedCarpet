@@ -1,7 +1,7 @@
 package com.kahzerx.carpet.api.settings;
 
 import com.kahzerx.carpet.utils.Messenger;
-//#if MC>=11200
+//#if MC>=11300
 import net.minecraft.server.command.source.CommandSourceStack;
 //#else
 //$$ import net.minecraft.server.command.source.CommandSource;
@@ -16,7 +16,7 @@ public class InvalidRuleValueException extends Exception {
 		super();
 	}
 
-	//#if MC>=11200
+	//#if MC>=11300
 	public void notifySource(String ruleName, CommandSourceStack source) {
 	//#else
 	//$$ public void notifySource(String ruleName, CommandSource source) {

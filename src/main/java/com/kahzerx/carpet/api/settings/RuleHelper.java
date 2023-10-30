@@ -2,7 +2,7 @@ package com.kahzerx.carpet.api.settings;
 
 import com.kahzerx.carpet.utils.TranslationKeys;
 import com.kahzerx.carpet.utils.Translations;
-//#if MC>=11200
+//#if MC>=11300
 import net.minecraft.server.command.source.CommandSourceStack;
 //#else
 //$$ import net.minecraft.server.command.source.CommandSource;
@@ -28,7 +28,7 @@ public final class RuleHelper {
 		return rule.defaultValue().equals(rule.value());
 	}
 
-	//#if MC>=11200
+	//#if MC>=11300
 	public static <T> void resetToDefault(CarpetRule<T> rule, CommandSourceStack source) {
 	//#else
 	//$$ public static <T> void resetToDefault(CarpetRule<T> rule, CommandSource source) {
