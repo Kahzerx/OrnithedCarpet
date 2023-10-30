@@ -3,7 +3,7 @@ package com.kahzerx.carpet.utils;
 import net.minecraft.entity.living.mob.MobCategory;
 import net.minecraft.entity.living.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
-//#if MC>=11200
+//#if MC>=11300
 import net.minecraft.server.command.source.CommandSourceStack;
 //#else
 //$$ import net.minecraft.server.command.source.CommandSource;
@@ -235,7 +235,7 @@ public class Messenger {
 		return c(text, command);
 	}
 
-	//#if MC>=11200
+	//#if MC>=11300
 	public static void m(CommandSourceStack source, Object ... fields) {
 	//#else
 	//$$ public static void m(CommandSource source, Object ... fields) {
@@ -286,7 +286,7 @@ public class Messenger {
 		lines.forEach(player::sendMessage);
 	}
 
-	//#if MC>=11200
+	//#if MC>=11300
 	public static void send(CommandSourceStack source, Collection<Text> lines) {
 	//#else
 	//$$ public static void send(CommandSource source, Collection<Text> lines) {

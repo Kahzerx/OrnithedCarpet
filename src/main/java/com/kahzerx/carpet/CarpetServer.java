@@ -33,7 +33,7 @@ public class CarpetServer {
 		//#if MC>=11300
 		settingsManager.registerCommand(dispatcher);
 		//#else
-		//$$ registry.register(new SettingsManager.CarpetCommand());
+		//$$ registry.register(new SettingsManager.CarpetCommand(settingsManager));
 		//#endif
 	}
 }

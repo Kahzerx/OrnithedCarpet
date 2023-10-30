@@ -29,11 +29,14 @@ import java.util.stream.Stream;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.handler.CommandManager;
 //#if MC>=11200
+import net.minecraft.server.command.source.CommandSource;
 import net.minecraft.server.command.source.CommandSourceStack;
 //#else
 //$$ import net.minecraft.server.command.source.CommandSource;
 //#endif
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -107,8 +110,7 @@ public class SettingsManager {
 		literalargumentbuilder.
 				executes((context)-> listAllSettings(context.getSource())).
 				then(CommandManager.literal("list").
-						executes( (c) -> listSettings(c.getSource(), String.format(tr(TranslationKeys.ALL_MOD_SETTINGS), fancyName),
-								getRulesSorted())).
+						executes( (c) -> listSettings(c.getSource(), String.format(tr(TranslationKeys.ALL_MOD_SETTINGS), fancyName), getRulesSorted())).
 						then(CommandManager.argument("tag", StringArgumentType.word()).
 								suggests( (c, b)->suggest(getCategories(), b)).
 								executes( (c) -> listSettings(c.getSource(),
@@ -267,10 +269,10 @@ public class SettingsManager {
 	}
 	//#endif
 
-	//#if MC>=11200
-	private int listAllSettings(CommandSourceStack source) {
+	//#if MC>=11300
+	public int listAllSettings(CommandSourceStack source) {
 	//#else
-	//$$ private int listAllSettings(CommandSource source) {
+	//$$ public int listAllSettings(CommandSource source) {
 	//#endif
 		int count = listSettings(source, String.format(tr(TranslationKeys.CURRENT_SETTINGS_HEADER), fancyName), getNonDefault());
 
@@ -314,7 +316,7 @@ public class SettingsManager {
 		return rules.values().stream().filter(r -> !RuleHelper.isInDefaultValue(r)).sorted().collect(Collectors.toList());
 	}
 
-	//#if MC>=11200
+	//#if MC>=11300
 	private int listSettings(CommandSourceStack source, String title, Collection<CarpetRule<?>> settings_list) {
 	//#else
 	//$$ private int listSettings(CommandSource source, String title, Collection<CarpetRule<?>> settings_list) {
@@ -386,6 +388,11 @@ public class SettingsManager {
 
 	//#if MC<=11202
 	//$$ public static class CarpetCommand extends AbstractCommand {  // TODO
+	//$$	private final SettingsManager sm;
+	//$$	public CarpetCommand(SettingsManager sm) {
+	//$$		this.sm = sm;
+	//$$	}
+	//$$
 	//$$	@Override
 	//$$	public String getName() {
 	//$$		return "carpet";
@@ -402,7 +409,12 @@ public class SettingsManager {
 		//#else
 		//$$ public void run(CommandSource commandSource, String[] strings) throws CommandException {
 		//#endif
-	//$$
+	//$$		if (strings.length == 0) {
+	//$$			this.sm.listAllSettings(commandSource);
+	//$$		}
+	//$$		if (strings.length == 1 && "list".equalsIgnoreCase(strings[0])) {
+	//$$			this.sm.listSettings(commandSource, String.format(tr(TranslationKeys.ALL_MOD_SETTINGS), this.sm.fancyName), this.sm.getRulesSorted());
+	//$$		}
 	//$$	}
 	//$$
 	//$$	@Override
@@ -411,9 +423,27 @@ public class SettingsManager {
 		//#else
 		//$$ public boolean canUse(CommandSource commandSource) {
 		//#endif
-	//$$		return CommandHelper.canUseCommand(commandSource, CarpetSettings.carpetCommandPermissionLevel);
+	//$$		return CommandHelper.canUseCommand(commandSource, CarpetSettings.carpetCommandPermissionLevel) && !this.sm.locked();
 	//$$	}
 	//$$
+	//$$	@Override
+		//#if MC>10809
+	//$$	public List<String> getSuggestions(MinecraftServer minecraftServer, CommandSource commandSource, String[] strings, @Nullable BlockPos blockPos) {
+		//#elseif MC>10710
+		//$$ public List<String> getSuggestions(CommandSource commandSource, String[] strings, @Nullable BlockPos blockPos) {
+		//#else
+		//$$ public List<String> getSuggestions(CommandSource commandSource, String[] strings) {
+		//#endif
+	//$$		if (this.sm.locked()) {
+	//$$			return Collections.emptyList();
+	//$$		}
+	//$$		if (strings.length == 1 && strings[0].trim().equalsIgnoreCase("")) {
+	//$$			List<String> suggestions = new ArrayList<>();
+	//$$			suggestions.add("list");
+	//$$			return suggestions;
+	//$$		}
+	//$$		return Collections.emptyList();
+	//$$	}
 		//#if MC<=10710
 		//$$ @Override
 		//$$ public int compareTo(@NotNull Object o) {
