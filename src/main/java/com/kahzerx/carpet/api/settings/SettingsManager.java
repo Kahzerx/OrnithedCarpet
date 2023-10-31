@@ -391,7 +391,7 @@ public class SettingsManager {
 	}
 
 	//#if MC<=11202
-	//$$ public static class CarpetCommand extends AbstractCommand {  // TODO
+	//$$ public static class CarpetCommand extends AbstractCommand {
 	//$$	private final SettingsManager sm;
 	//$$	public CarpetCommand(SettingsManager sm) {
 	//$$		this.sm = sm;
@@ -399,12 +399,12 @@ public class SettingsManager {
 	//$$
 	//$$	@Override
 	//$$	public String getName() {
-	//$$		return "carpet";
+	//$$		return this.sm.identifier();
 	//$$	}
 	//$$
 	//$$	@Override
 	//$$	public String getUsage(CommandSource commandSource) {
-	//$$		return "carpet <rule> <value>";
+	//$$		return this.sm.identifier() + " <rule> <value>";
 	//$$	}
 	//$$
 	//$$	@Override
