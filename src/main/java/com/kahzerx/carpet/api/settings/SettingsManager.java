@@ -132,7 +132,7 @@ public class SettingsManager {
 						requires(s -> !locked() ).
 						executes( (c) -> displayRuleMenu(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")))).
 						then(CommandManager.argument("value", StringArgumentType.greedyString()).
-								suggests((c, b)-> suggest(contextRule(StringArgumentType.getString(c, "rule")).suggestions(),b)).
+								suggests((c, b)-> suggest(contextRule(StringArgumentType.getString(c, "rule")).suggestions(), b)).
 								executes((c) -> setRule(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")), StringArgumentType.getString(c, "value")))));
 
 		dispatcher.register(literalargumentbuilder);
@@ -175,14 +175,20 @@ public class SettingsManager {
 		return 1;
 	}
 
+	//#if MC>=11300
 	private CarpetRule<?> contextRule(String ruleName) throws CommandSyntaxException {
-		CarpetRule<?> rule = getCarpetRule(ruleName);
+	//#else
+	//$$ private CarpetRule<?> contextRule(String ruleName) {
+	//#endif
 		//#if MC>=11300
+		CarpetRule<?> rule = getCarpetRule(ruleName);
 		if (rule == null) {
 			throw new SimpleCommandExceptionType(Messenger.c("rb " + tr(TranslationKeys.UNKNOWN_RULE) + ": " + ruleName)).create();
 		}
-		//#endif
 		return rule;
+		//#else
+		//$$ return getCarpetRule(ruleName);
+		//#endif
 	}
 
 	public CarpetRule<?> getCarpetRule(String name) {
@@ -420,6 +426,8 @@ public class SettingsManager {
 	//$$			CarpetRule<?> rule = this.sm.contextRule(strings[0]);
 	//$$			if (rule != null) {
 	//$$				this.sm.displayRuleMenu(commandSource, rule);
+	//$$			} else {
+	//$$				Messenger.c("rb " + tr(TranslationKeys.UNKNOWN_RULE) + ": " + strings[0]);
 	//$$			}
 	//$$		}
 	//$$	}
@@ -464,10 +472,17 @@ public class SettingsManager {
 	//$$			List<String> filteredSuggestionList = regularSuggestionList.isEmpty() ? smartSuggestionList : regularSuggestionList;
 	//$$			return new ArrayList<>(filteredSuggestionList);
 	//$$		}
-	//$$		if (strings.length == 2 && strings[0].equalsIgnoreCase("list")) {
-	//$$			List<String> categories = new ArrayList<>();
-	//$$			this.sm.getCategories().forEach(categories::add);
-	//$$			return categories;
+	//$$		if (strings.length == 2) {
+	//$$ 			if (strings[0].equalsIgnoreCase("list")) {
+	//$$				List<String> categories = new ArrayList<>();
+	//$$				this.sm.getCategories().forEach(categories::add);
+	//$$				return categories;
+	//$$			} else {
+	//$$ 				CarpetRule<?> rule = this.sm.contextRule(strings[0]);
+	//$$				if (rule != null) {
+	//$$					return new ArrayList<>(this.sm.contextRule(strings[0]).suggestions());
+	//$$				}
+	//$$			}
 	//$$		}
 	//$$		return Collections.emptyList();
 	//$$	}
