@@ -107,4 +107,26 @@ public class CarpetSettings {
 
 	@Rule( desc = "Players absorb XP instantly, without delay", categories = CREATIVE )
 	public static boolean xpNoCooldown = false;
+
+	private static class PushLimitLimits extends Validator<Integer> {
+		@Override
+		//#if MC>=11300
+		public Integer validate(CommandSourceStack source, CarpetRule<Integer> currentRule, Integer newValue, String string) {
+		//#else
+		//$$ public Integer validate(CommandSource source, CarpetRule<Integer> currentRule, Integer newValue, String string) {
+		//#endif
+			return (newValue > 0 && newValue <= 1024) ? newValue : null;
+		}
+
+		@Override
+		public String description() { return "You must choose a value from 1 to 1024";}
+	}
+	@Rule(
+		desc = "Customizable piston push limit",
+		options = {"10", "12", "14", "100"},
+		categories = CREATIVE,
+		strict = false,
+		validators = PushLimitLimits.class
+	)
+	public static int pushLimit = 12;
 }
