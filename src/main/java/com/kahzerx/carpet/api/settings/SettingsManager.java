@@ -10,7 +10,6 @@ import com.kahzerx.carpet.utils.Translations;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
@@ -18,6 +17,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 //#else
+//$$ import net.minecraft.server.command.exception.CommandSyntaxException;
 //$$ import net.minecraft.server.command.AbstractCommand;
 //$$ import net.minecraft.server.command.exception.CommandException;
 //$$ import net.minecraft.server.command.source.CommandSource;
@@ -28,13 +28,14 @@ import java.util.stream.Stream;
 //$$ import org.jetbrains.annotations.NotNull;
 //#endif
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.command.handler.CommandManager;
 //#if MC>=11300
+import net.minecraft.server.command.handler.CommandManager;
 import net.minecraft.server.command.source.CommandSourceStack;
 //#else
 //$$ import net.minecraft.server.command.source.CommandSource;
 //$$ import net.minecraft.util.math.BlockPos;
 //$$ import org.jetbrains.annotations.Nullable;
+//$$ import java.util.stream.Stream;
 //#endif
 import net.minecraft.text.Text;
 
@@ -118,21 +119,21 @@ public class SettingsManager {
 //						requires(s -> !locked()).
 //						then(RequiredArgumentBuilder.argument("rule", StringArgumentType.word()).
 //								suggests( (c, b) -> suggestMatchingContains(getRulesSorted().stream().map(CarpetRule::name), b)).
-//								executes((c) -> removeDefault(c.getSource(), contextRule(c))))).  // TODO
+//								executes((c) -> removeDefault(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")))))).  // TODO
 //				then(LiteralArgumentBuilder.literal("setDefault").
 //						requires(s -> !locked()).
 //						then(RequiredArgumentBuilder.argument("rule", StringArgumentType.word()).
 //								suggests( (c, b) -> suggestMatchingContains(getRulesSorted().stream().map(CarpetRule::name), b)).
 //								then(RequiredArgumentBuilder.argument("value", StringArgumentType.greedyString()).
-//										suggests((c, b)-> suggest(contextRule(c).suggestions(), b)).
-//										executes((c) -> setDefault(c.getSource(), contextRule(c), StringArgumentType.getString(c, "value")))))).  // TODO
+//										suggests((c, b)-> suggest(contextRule(StringArgumentType.getString(c, "rule")).suggestions(), b)).
+//										executes((c) -> setDefault(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")), StringArgumentType.getString(c, "value")))))).  // TODO
 				then(CommandManager.argument("rule", StringArgumentType.word()).
 						suggests( (c, b) -> suggestMatchingContains(getRulesSorted().stream().map(CarpetRule::name), b)).
 						requires(s -> !locked() ).
-						executes( (c) -> displayRuleMenu(c.getSource(), contextRule(c))).
+						executes( (c) -> displayRuleMenu(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")))).
 						then(CommandManager.argument("value", StringArgumentType.greedyString()).
-								suggests((c, b)-> suggest(contextRule(c).suggestions(),b)).
-								executes((c) -> setRule(c.getSource(), contextRule(c), StringArgumentType.getString(c, "value")))));
+								suggests((c, b)-> suggest(contextRule(StringArgumentType.getString(c, "rule")).suggestions(),b)).
+								executes((c) -> setRule(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")), StringArgumentType.getString(c, "value")))));
 
 		dispatcher.register(literalargumentbuilder);
 	}
@@ -174,16 +175,15 @@ public class SettingsManager {
 		return 1;
 	}
 
-	//#if MC>=11300
-	private CarpetRule<?> contextRule(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-		String ruleName = StringArgumentType.getString(ctx, "rule");
+	private CarpetRule<?> contextRule(String ruleName) throws CommandSyntaxException {
 		CarpetRule<?> rule = getCarpetRule(ruleName);
+		//#if MC>=11300
 		if (rule == null) {
 			throw new SimpleCommandExceptionType(Messenger.c("rb " + tr(TranslationKeys.UNKNOWN_RULE) + ": " + ruleName)).create();
 		}
+		//#endif
 		return rule;
 	}
-	//#endif
 
 	public CarpetRule<?> getCarpetRule(String name) {
 		return rules.get(name);
@@ -416,6 +416,12 @@ public class SettingsManager {
 	//$$		if (strings.length == 2 && "list".equalsIgnoreCase(strings[0]) && Iterables.contains(this.sm.getCategories(), strings[1])) {
 	//$$			this.sm.listSettings(commandSource, String.format(tr(TranslationKeys.MOD_SETTINGS_MATCHING), this.sm.fancyName, RuleHelper.translatedCategory(this.sm.identifier(), strings[1])), this.sm.getRulesMatching(strings[1]));
 	//$$		}
+	//$$		if (strings.length == 1 && this.sm.getCarpetRules().stream().map(CarpetRule::name).collect(Collectors.toList()).contains(strings[0])) {
+	//$$			CarpetRule<?> rule = this.sm.contextRule(strings[0]);
+	//$$			if (rule != null) {
+	//$$				this.sm.displayRuleMenu(commandSource, rule);
+	//$$			}
+	//$$		}
 	//$$	}
 	//$$
 	//$$	@Override
@@ -438,10 +444,25 @@ public class SettingsManager {
 	//$$		if (this.sm.locked()) {
 	//$$			return Collections.emptyList();
 	//$$		}
-	//$$		if (strings.length == 1 && strings[0].trim().equalsIgnoreCase("")) {
-	//$$			List<String> suggestions = new ArrayList<>();
-	//$$			suggestions.add("list");
-	//$$			return suggestions;
+	//$$		if (strings.length == 1) {
+	//$$			List<String> stream = this.sm.getRulesSorted().stream().map(CarpetRule::name).collect(Collectors.toList());
+	//$$ 			stream.add("list");
+	//$$			List<String> regularSuggestionList = new ArrayList<>();
+	//$$			List<String> smartSuggestionList = new ArrayList<>();
+	//$$			stream.forEach((listItem) -> {
+	//$$				List<String> words = Arrays.stream(listItem.split("(?<!^)(?=[A-Z])")).map(s -> s.toLowerCase(Locale.ROOT)).collect(Collectors.toList());
+	//$$				List<String> prefixes = new ArrayList<>(words.size());
+	//$$				for (int i = 0; i < words.size(); i++)
+	//$$					prefixes.add(String.join("", words.subList(i, words.size())));
+	//$$				if (prefixes.stream().anyMatch(s -> s.startsWith(strings[0]))) {
+	//$$					smartSuggestionList.add(listItem);
+	//$$				}
+	//$$				if (this.sm.matchesSubStr(strings[0], listItem.toLowerCase(Locale.ROOT))) {
+	//$$					regularSuggestionList.add(listItem);
+	//$$				}
+	//$$			});
+	//$$			List<String> filteredSuggestionList = regularSuggestionList.isEmpty() ? smartSuggestionList : regularSuggestionList;
+	//$$			return new ArrayList<>(filteredSuggestionList);
 	//$$		}
 	//$$		if (strings.length == 2 && strings[0].equalsIgnoreCase("list")) {
 	//$$			List<String> categories = new ArrayList<>();
