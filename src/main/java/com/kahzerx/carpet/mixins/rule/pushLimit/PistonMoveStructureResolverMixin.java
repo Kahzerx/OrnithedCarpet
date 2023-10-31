@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
-@Mixin(PistonMoveStructureResolver.class)
+@Mixin(value = PistonMoveStructureResolver.class, priority = 420)
 public class PistonMoveStructureResolverMixin {
 	@ModifyConstant(method = "addColumn", constant = @Constant(intValue = 12), expect = 3)
 	private int pushLimit(int constant) {
