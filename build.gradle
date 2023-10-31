@@ -8,13 +8,13 @@ plugins {
 }
 
 preprocess {
-	def mc107 = createNode('1.7.10', 1_07_10, 'yarn')
-	def mc108 = createNode('1.8.9', 1_08_09, 'yarn')
-	def mc109 = createNode('1.9.4', 1_09_04, 'yarn')
-	def mc110 = createNode('1.10.2', 1_10_02, 'yarn')
-	def mc111 = createNode('1.11.2', 1_11_02, 'yarn')
-	def mc112 = createNode('1.12.2', 1_12_02, 'yarn')
-	def mc113 = createNode('1.13.2', 1_13_02, 'yarn')  // root
+	def mc107 = createNode('1.7.10', 1_07_10, 'feather')
+	def mc108 = createNode('1.8.9', 1_08_09, 'feather')
+	def mc109 = createNode('1.9.4', 1_09_04, 'feather')
+	def mc110 = createNode('1.10.2', 1_10_02, 'feather')
+	def mc111 = createNode('1.11.2', 1_11_02, 'feather')
+	def mc112 = createNode('1.12.2', 1_12_02, 'feather')
+	def mc113 = createNode('1.13.2', 1_13_02, 'feather')  // root
 
 	mc107.link(mc108, null)
 	mc108.link(mc109, null)

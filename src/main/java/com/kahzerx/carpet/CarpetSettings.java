@@ -104,4 +104,7 @@ public class CarpetSettings {
 	@Rule(desc = "Parrots don't get of your shoulders until you receive proper damage", categories = {SURVIVAL, FEATURE})
 	public static boolean persistentParrots = false;
 	//#endif
+
+	@Rule( desc = "Players absorb XP instantly, without delay", categories = CREATIVE )
+	public static boolean xpNoCooldown = false;
 }

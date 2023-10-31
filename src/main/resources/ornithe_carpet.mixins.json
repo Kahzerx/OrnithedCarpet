@@ -6,6 +6,7 @@
   "mixins": [
     "rule.persistentParrots.PlayerEntityMixin",
     "rule.portalDelay.PlayerEntityMixin",
+    "rule.xpNoCooldown.XpOrbEntityMixin",
     "server.CommandsMixin"
   ],
   "client": [
