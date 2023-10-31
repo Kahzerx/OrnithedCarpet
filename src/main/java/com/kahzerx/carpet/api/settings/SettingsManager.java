@@ -416,18 +416,28 @@ public class SettingsManager {
 	//$$		if (strings.length == 0) {
 	//$$			this.sm.listAllSettings(commandSource);
 	//$$		}
-	//$$		if (strings.length == 1 && "list".equalsIgnoreCase(strings[0])) {
-	//$$			this.sm.listSettings(commandSource, String.format(tr(TranslationKeys.ALL_MOD_SETTINGS), this.sm.fancyName), this.sm.getRulesSorted());
-	//$$		}
-	//$$		if (strings.length == 2 && "list".equalsIgnoreCase(strings[0]) && Iterables.contains(this.sm.getCategories(), strings[1])) {
-	//$$			this.sm.listSettings(commandSource, String.format(tr(TranslationKeys.MOD_SETTINGS_MATCHING), this.sm.fancyName, RuleHelper.translatedCategory(this.sm.identifier(), strings[1])), this.sm.getRulesMatching(strings[1]));
-	//$$		}
-	//$$		if (strings.length == 1 && this.sm.getCarpetRules().stream().map(CarpetRule::name).collect(Collectors.toList()).contains(strings[0])) {
-	//$$			CarpetRule<?> rule = this.sm.contextRule(strings[0]);
-	//$$			if (rule != null) {
-	//$$				this.sm.displayRuleMenu(commandSource, rule);
+	//$$		if (strings.length == 1) {
+	//$$			if ("list".equalsIgnoreCase(strings[0])) {
+	//$$				this.sm.listSettings(commandSource, String.format(tr(TranslationKeys.ALL_MOD_SETTINGS), this.sm.fancyName), this.sm.getRulesSorted());
 	//$$			} else {
-	//$$				Messenger.c("rb " + tr(TranslationKeys.UNKNOWN_RULE) + ": " + strings[0]);
+	//$$				CarpetRule<?> rule = this.sm.contextRule(strings[0]);
+	//$$				if (rule != null) {
+	//$$					this.sm.displayRuleMenu(commandSource, rule);
+	//$$				} else {
+	//$$					Messenger.c("rb " + tr(TranslationKeys.UNKNOWN_RULE) + ": " + strings[0]);
+	//$$				}
+	//$$			}
+	//$$		}
+	//$$		if (strings.length == 2) {
+	//$$			if ("list".equalsIgnoreCase(strings[0]) && Iterables.contains(this.sm.getCategories(), strings[1])) {
+	//$$				this.sm.listSettings(commandSource, String.format(tr(TranslationKeys.MOD_SETTINGS_MATCHING), this.sm.fancyName, RuleHelper.translatedCategory(this.sm.identifier(), strings[1])), this.sm.getRulesMatching(strings[1]));
+	//$$			} else {
+	//$$				CarpetRule<?> rule = this.sm.contextRule(strings[0]);
+	//$$				if (rule != null) {
+	//$$					this.sm.setRule(commandSource, rule, strings[1]);
+	//$$				} else {
+	//$$					Messenger.c("rb " + tr(TranslationKeys.UNKNOWN_RULE) + ": " + strings[0]);
+	//$$				}
 	//$$			}
 	//$$		}
 	//$$	}
