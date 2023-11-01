@@ -129,4 +129,13 @@ public class CarpetSettings {
 		validators = PushLimitLimits.class
 	)
 	public static int pushLimit = 12;
+
+	@Rule(
+		desc = "Customizable powered rail power range",
+		options = {"9", "15", "30"},
+		categories = CREATIVE,
+		strict = false,
+		validators = PushLimitLimits.class
+	)
+	public static int railPowerLimit = 9;
 }
