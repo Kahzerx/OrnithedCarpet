@@ -149,6 +149,13 @@ public class SettingsManager {
 	}
 	//#endif
 
+	public void detachServer() {
+		for (CarpetRule<?> rule : rules.values()) {
+			RuleHelper.resetToDefault(rule, null);
+		}
+		server = null;
+	}
+
 	private boolean matchesSubStr(String string, String string2) {
 		for(int i = 0; !string2.startsWith(string, i); ++i) {
 			i = string2.indexOf(95, i);

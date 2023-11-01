@@ -1,6 +1,7 @@
 package com.kahzerx.carpet;
 
 import com.kahzerx.carpet.api.settings.SettingsManager;
+import com.kahzerx.carpet.network.ServerNetworkHandler;
 //#if MC>=11300
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.server.command.source.CommandSourceStack;
@@ -10,6 +11,7 @@ import net.minecraft.server.command.source.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class CarpetServer {
 	public static MinecraftServer minecraftServer;
@@ -36,4 +38,28 @@ public class CarpetServer {
 		//$$ registry.register(new SettingsManager.CarpetCommand(settingsManager));
 		//#endif
 	}
+
+	public static void forEachManager(Consumer<SettingsManager> consumer) {
+		consumer.accept(settingsManager);
+		for (CarpetExtension e : extensions) {
+			SettingsManager manager = e.extensionSettingsManager();
+			if (manager != null) {
+				consumer.accept(manager);
+			}
+		}
+	}
+
+	public static void onServerClosed(MinecraftServer server) {
+		if (minecraftServer != null) {
+			ServerNetworkHandler.close();
+			extensions.forEach(e -> e.onServerClosed(server));
+			minecraftServer = null;
+		}
+	}
+
+	public static void onServerDoneClosing(MinecraftServer server) {
+		forEachManager(SettingsManager::detachServer);
+	}
+
+	public static void clientPreClosing() { }
 }

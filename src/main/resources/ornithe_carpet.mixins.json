@@ -9,7 +9,9 @@
     "rule.pushLimit.PistonMoveStructureResolverMixin",
     "rule.railPowerLimit.PoweredRailBlockMixin",
     "rule.xpNoCooldown.XpOrbEntityMixin",
-    "server.CommandsMixin"
+    "server.CommandManagerMixin",
+    "server.MinecraftServerMixin",
+    "server.PlayerManagerMixin"
   ],
   "client": [
   ],

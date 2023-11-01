@@ -18,12 +18,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CommandManager.class)
 //#if MC>=11300
-public class CommandsMixin {
+public class CommandManagerMixin {
 	@Shadow
 	@Final
 	private CommandDispatcher<CommandSourceStack> dispatcher;
 //#else
-//$$ public abstract class CommandsMixin extends CommandRegistry {
+//$$ public abstract class CommandManagerMixin extends CommandRegistry {
 //#endif
 
 	@Inject(method = "<init>", at = @At("RETURN"))

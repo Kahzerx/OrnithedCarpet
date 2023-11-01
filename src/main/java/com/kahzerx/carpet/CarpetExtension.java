@@ -12,6 +12,7 @@ public interface CarpetExtension {
 	default void onServerLoaded(MinecraftServer server) {}
 	default void onServerLoadedWorlds(MinecraftServer server) {}
 	default void onTick(MinecraftServer server) {}
+	default SettingsManager extensionSettingsManager() { return null; }
 	default void onPlayerLoggedIn(ServerPlayerEntity player) {}
 	default void onPlayerLoggedOut(ServerPlayerEntity player) {}
 	default void onServerClosed(MinecraftServer server) {}
