@@ -10,7 +10,6 @@ import net.minecraft.client.entity.living.player.LocalClientPlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.resource.Identifier;
 
 public class CarpetClient {
@@ -63,7 +62,7 @@ public class CarpetClient {
 	}
 
 	public static boolean sendClientCommand(String command) {
-		if (!isCarpetServer()) {
+		if (!carpetServer) {
 			return false;
 		}
 		ClientNetworkHandler.clientCommand(command);

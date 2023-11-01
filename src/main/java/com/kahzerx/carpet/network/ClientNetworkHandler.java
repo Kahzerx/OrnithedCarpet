@@ -79,8 +79,7 @@ public class ClientNetworkHandler {
         NbtCompound data = new NbtCompound();
         data.putString(CarpetClient.HELLO, CarpetSettings.carpetVersion);
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeString(CarpetClient.HELLO);
-		buf.writeString(CarpetClient.serverCarpetVersion);
+		buf.writeNbtCompound(data);
 		CarpetClient.getClientPlayer().networkHandler.sendPacket(new CustomPayloadC2SPacket(
 			//#if MC>11202
 			CarpetClient.CARPET_CHANNEL,
