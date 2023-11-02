@@ -17,10 +17,15 @@ import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 
 public class ClientNetworkHandler {
     private static final Map<String, BiConsumer<LocalClientPlayerEntity, NbtElement>> dataHandlers = new HashMap<>();
+	public static Lock lockedClientPlayer = new ReentrantLock();
+	public static Condition clientPlayerLoaded = lockedClientPlayer.newCondition();
 
     static {
         dataHandlers.put(CarpetClient.HI, (p, t) -> onHi((NbtString) t));
@@ -28,7 +33,6 @@ public class ClientNetworkHandler {
             NbtCompound ruleset = (NbtCompound) t;
             for (Object k : ruleset.getKeys()) {
 				String ruleKey = (String) k;
-				System.out.println(ruleKey);
 				NbtCompound ruleNBT = (NbtCompound) ruleset.get(ruleKey);
                 SettingsManager manager = null;
                 String ruleName;
@@ -82,7 +86,20 @@ public class ClientNetworkHandler {
         data.putString(CarpetClient.HELLO, CarpetSettings.carpetVersion);
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeNbtCompound(data);
-		CarpetClient.getClientPlayer().networkHandler.sendPacket(new CustomPayloadC2SPacket(
+		// TODO wait for clientPlayer != null
+		if (CarpetClient.getClientPlayer() == null) {
+			lockedClientPlayer.lock();
+		}
+		try {
+			while (CarpetClient.getClientPlayer() == null) {
+				clientPlayerLoaded.await();
+			}
+		} catch (InterruptedException ignored) {
+		} finally {
+			lockedClientPlayer.lock();  // TODO unsure...
+            lockedClientPlayer.unlock();
+        }
+        CarpetClient.getClientPlayer().networkHandler.sendPacket(new CustomPayloadC2SPacket(
 			//#if MC>11202
 			CarpetClient.CARPET_CHANNEL,
 			//#else

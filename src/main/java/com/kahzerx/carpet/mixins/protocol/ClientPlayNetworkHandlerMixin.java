@@ -31,6 +31,12 @@ public class ClientPlayNetworkHandlerMixin {
 	@Inject(method = "handleLogin", at = @At("RETURN"))
 	private void onJoin(LoginS2CPacket loginS2CPacket, CallbackInfo ci) {
 		CarpetClient.gameJoined(minecraft.player);
+		ClientNetworkHandler.lockedClientPlayer.lock();
+		try {
+			ClientNetworkHandler.clientPlayerLoaded.signal();
+		} finally {
+			ClientNetworkHandler.lockedClientPlayer.unlock();
+		}
 	}
 
 	@Inject(method = "onDisconnect", at = @At(value = "HEAD"))
