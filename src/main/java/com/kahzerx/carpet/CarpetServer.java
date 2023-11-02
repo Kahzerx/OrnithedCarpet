@@ -9,6 +9,8 @@ import net.minecraft.server.command.source.CommandSourceStack;
 //$$ import net.minecraft.server.command.handler.CommandRegistry;
 //#endif
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.entity.living.player.ServerPlayerEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -37,6 +39,11 @@ public class CarpetServer {
 		//#else
 		//$$ registry.register(new SettingsManager.CarpetCommand(settingsManager));
 		//#endif
+	}
+
+	public static void onPlayerLoggedIn(ServerPlayerEntity player) {
+		ServerNetworkHandler.onPlayerJoin(player);
+		extensions.forEach(e -> e.onPlayerLoggedIn(player));
 	}
 
 	public static void forEachManager(Consumer<SettingsManager> consumer) {

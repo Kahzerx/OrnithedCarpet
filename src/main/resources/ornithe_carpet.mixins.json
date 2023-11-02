@@ -4,6 +4,8 @@
   "package": "com.kahzerx.carpet.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "protocol.CustomPayloadC2SPacketMixin",
+    "protocol.ServerPlayNetworkHandlerMixin",
     "rule.persistentParrots.PlayerEntityMixin",
     "rule.portalDelay.PlayerEntityMixin",
     "rule.pushLimit.PistonMoveStructureResolverMixin",
@@ -14,6 +16,7 @@
     "server.PlayerManagerMixin"
   ],
   "client": [
+    "protocol.ClientPlayNetworkHandlerMixin"
   ],
   "server": [
   ],

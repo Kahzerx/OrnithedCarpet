@@ -85,7 +85,7 @@ public class ServerNetworkHandler {
         playerEntity.networkHandler.sendPacket(data.build());
     }
 
-    public static void sendPlayerLevelData(ServerPlayerEntity player, World world) {}
+    public static void sendPlayerWorldData(ServerPlayerEntity player, World world) {}
 
 	//#if MC>10710
 	private static int getPermissions(MinecraftServer server, GameProfile gameProfile) {
