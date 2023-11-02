@@ -10,7 +10,9 @@ import net.minecraft.client.entity.living.player.LocalClientPlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+//#if MC>10710
 import net.minecraft.resource.Identifier;
+//#endif
 
 public class CarpetClient {
 	public static final String HI = "69";
@@ -22,7 +24,11 @@ public class CarpetClient {
 	//#endif
 	private static boolean carpetServer = false;
 	public static String serverCarpetVersion;
-	public static final Identifier CARPET_CHANNEL = new Identifier("carpet", "hello");
+	//#if MC>10710
+	public static final Identifier CARPET_CHANNEL = new Identifier("carpet:hello");
+	//#else
+	//$$ public static final String CARPET_CHANNEL = "carpet:hello";
+	//#endif
 
 	//#if MC>10710
 	public static void gameJoined(LocalClientPlayerEntity player) {
