@@ -36,12 +36,12 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	if (mcVersion < 10802) {
 		mappings loom.layered {
-			mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_build}"
+			mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_build}:v2"
 			addLayer ploceus.nestedMappings()
 		}
 		nests "net.ornithemc:nests:${project.minecraft_version}+build.${project.nests_build}"
 	} else {
-		mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_build}"
+		mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_build}:v2"
 	}
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 }

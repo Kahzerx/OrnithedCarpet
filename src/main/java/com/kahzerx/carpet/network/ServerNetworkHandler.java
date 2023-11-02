@@ -41,7 +41,7 @@ public class ServerNetworkHandler {
     private static final Set<ServerPlayerEntity> validCarpetPlayers = new HashSet<>();
 
     private static final Map<String, BiConsumer<ServerPlayerEntity, NbtElement>> dataHandlers = new HashMap<String, BiConsumer<ServerPlayerEntity, NbtElement>>(){{
-		put(CarpetClient.HELLO, (p, t) -> onHello(p, t.toString()));
+		put(CarpetClient.HELLO, (p, t) -> onHello(p, (NbtString) t));
 		put("clientCommand", (p, t) -> handleClientCommand(p, (NbtCompound) t));
 	}};
 
@@ -64,10 +64,10 @@ public class ServerNetworkHandler {
         }
     }
 
-    public static void onHello(ServerPlayerEntity playerEntity, String version) {
+    public static void onHello(ServerPlayerEntity playerEntity, NbtString versionElement) {
         validCarpetPlayers.add(playerEntity);
-        remoteCarpetPlayers.put(playerEntity, version);
-        if (version.equals(CarpetSettings.carpetVersion)) {
+        remoteCarpetPlayers.put(playerEntity, versionElement.asString());
+        if (versionElement.asString().equals(CarpetSettings.carpetVersion)) {
 			//#if MC>11202
 			CarpetSettings.LOG.info("Player " + playerEntity.getName().getString() + " joined with a matching carpet client");
 			//#else
@@ -75,9 +75,9 @@ public class ServerNetworkHandler {
 			//#endif
         } else {
 			//#if MC>11202
-			CarpetSettings.LOG.warn("Player " + playerEntity.getName().getString() + " joined with another carpet version: " + version);
+			CarpetSettings.LOG.warn("Player " + playerEntity.getName().getString() + " joined with another carpet version: " + versionElement.asString());
 			//#else
-			//$$ CarpetSettings.LOG.warn("Player " + playerEntity.getName() + " joined with another carpet version: " + version);
+			//$$ CarpetSettings.LOG.warn("Player " + playerEntity.getName() + " joined with another carpet version: " + versionElement.asString());
 			//#endif
         }
         DataBuilder data = DataBuilder.create(playerEntity.server); // tickrate related settings are sent on world change
@@ -247,8 +247,8 @@ public class ServerNetworkHandler {
     public static void onClientData(ServerPlayerEntity player, NbtCompound compound) {
         for (Object k : compound.getKeys()) {
 			String key = (String) k;
-            if (dataHandlers.containsKey(key)) {
-                dataHandlers.get(key).accept(player, compound.get(key));
+			if (dataHandlers.containsKey(key)) {
+				dataHandlers.get(key).accept(player, compound.get(key));
             } else {
                 CarpetSettings.LOG.warn("Unknown carpet client data: " + key);
             }

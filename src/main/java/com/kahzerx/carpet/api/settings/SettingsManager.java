@@ -150,6 +150,11 @@ public class SettingsManager {
 	}
 	//#endif
 
+	public void attachServer(MinecraftServer server) {
+		this.server = server;
+		// TODO loadConfigurationFromConf();
+	}
+
 	public void detachServer() {
 		for (CarpetRule<?> rule : rules.values()) {
 			RuleHelper.resetToDefault(rule, null);

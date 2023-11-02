@@ -26,6 +26,16 @@ public class CarpetServer {
 		extensions.forEach(CarpetExtension::onGameStarted);
 	}
 
+	public static void onServerLoaded(MinecraftServer server) {
+		CarpetServer.minecraftServer = server;
+		forEachManager(sm -> sm.attachServer(server));
+		extensions.forEach(e -> e.onServerLoaded(server));
+	}
+
+	public static void onServerLoadedWorlds(MinecraftServer minecraftServer) {
+		extensions.forEach(e -> e.onServerLoadedWorlds(minecraftServer));
+	}
+
 	//#if MC>=11300
 	public static void registerCarpetCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
 	//#else

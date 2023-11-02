@@ -11,6 +11,7 @@ import net.minecraft.client.entity.living.player.LocalClientPlayerEntity;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 
@@ -22,11 +23,12 @@ public class ClientNetworkHandler {
     private static final Map<String, BiConsumer<LocalClientPlayerEntity, NbtElement>> dataHandlers = new HashMap<>();
 
     static {
-        dataHandlers.put(CarpetClient.HI, (p, t) -> onHi(t.toString()));
+        dataHandlers.put(CarpetClient.HI, (p, t) -> onHi((NbtString) t));
         dataHandlers.put("Rules", (p, t) -> {
             NbtCompound ruleset = (NbtCompound) t;
             for (Object k : ruleset.getKeys()) {
 				String ruleKey = (String) k;
+				System.out.println(ruleKey);
 				NbtCompound ruleNBT = (NbtCompound) ruleset.get(ruleKey);
                 SettingsManager manager = null;
                 String ruleName;
@@ -62,9 +64,9 @@ public class ClientNetworkHandler {
 
     // Ran on the Main Minecraft Thread
 
-    private static void onHi(String version) {
+    private static void onHi(NbtString versionElement) {
         CarpetClient.setCarpetServer();
-        CarpetClient.serverCarpetVersion = version;
+        CarpetClient.serverCarpetVersion = versionElement.asString();
         if (CarpetSettings.carpetVersion.equals(CarpetClient.serverCarpetVersion)) {
             CarpetSettings.LOG.info("Joined carpet server with matching carpet version");
         } else {

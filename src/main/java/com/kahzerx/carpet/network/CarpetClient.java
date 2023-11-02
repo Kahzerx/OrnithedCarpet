@@ -62,7 +62,7 @@ public class CarpetClient {
 	}
 
 	public static boolean sendClientCommand(String command) {
-		if (!carpetServer) {
+		if (!carpetServer && CarpetServer.minecraftServer == null) {
 			return false;
 		}
 		ClientNetworkHandler.clientCommand(command);
