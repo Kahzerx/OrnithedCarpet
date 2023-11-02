@@ -13,7 +13,8 @@
     "rule.xpNoCooldown.XpOrbEntityMixin",
     "server.CommandManagerMixin",
     "server.MinecraftServerMixin",
-    "server.PlayerManagerMixin"
+    "server.PlayerManagerMixin",
+    "server.ServerPlayNetworkHandlerMixin"
   ],
   "client": [
     "protocol.ClientPlayNetworkHandlerMixin",

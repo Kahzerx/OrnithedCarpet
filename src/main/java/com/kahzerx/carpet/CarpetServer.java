@@ -46,6 +46,11 @@ public class CarpetServer {
 		extensions.forEach(e -> e.onPlayerLoggedIn(player));
 	}
 
+	public static void onPlayerLoggedOut(ServerPlayerEntity player) {
+		ServerNetworkHandler.onPlayerLoggedOut(player);
+		extensions.forEach(e -> e.onPlayerLoggedOut(player));
+	}
+
 	public static void forEachManager(Consumer<SettingsManager> consumer) {
 		consumer.accept(settingsManager);
 		for (CarpetExtension e : extensions) {

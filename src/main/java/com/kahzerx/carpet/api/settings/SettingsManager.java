@@ -2,6 +2,7 @@ package com.kahzerx.carpet.api.settings;
 
 import com.google.common.collect.Sets;
 import com.kahzerx.carpet.CarpetSettings;
+import com.kahzerx.carpet.network.ServerNetworkHandler;
 import com.kahzerx.carpet.utils.CommandHelper;
 import com.kahzerx.carpet.utils.Messenger;
 import com.kahzerx.carpet.utils.TranslationKeys;
@@ -398,6 +399,7 @@ public class SettingsManager {
 	//#endif
 		observers.forEach(observer -> observer.ruleChanged(source, rule, userInput));
 		staticObservers.forEach(observer -> observer.ruleChanged(source, rule, userInput));
+		ServerNetworkHandler.updateRuleWithConnectedClients(rule);
 //		ServerNetworkHandler.updateRuleWithConnectedClients(rule);  // TODO
 	}
 

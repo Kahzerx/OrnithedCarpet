@@ -273,12 +273,6 @@ public class ServerNetworkHandler {
         }
     }
 
-    public static void sendCustomCommand(ServerPlayerEntity player, String command, NbtElement data) {
-        if (isValidCarpetPlayer(player)) {
-            player.networkHandler.sendPacket(DataBuilder.create(player.server).withCustomNbt(command, data).build());
-        }
-    }
-
     public static void onPlayerLoggedOut(ServerPlayerEntity player) {
         validCarpetPlayers.remove(player);
         if (!player.networkHandler.getConnection().isLocal()) {
@@ -296,7 +290,6 @@ public class ServerNetworkHandler {
 //            return false;
 //        }
         return validCarpetPlayers.contains(player);
-
     }
 
     public static String getPlayerStatus(ServerPlayerEntity player) {
