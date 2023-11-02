@@ -40,7 +40,7 @@ public class ClientPlayNetworkHandlerMixin {
 
 	@Inject(method = "handleCustomPayload", at = @At("HEAD"), cancellable = true)
 	private void onCustomPayload(CustomPayloadS2CPacket customPayloadS2CPacket, CallbackInfo ci) {
-		//#if MC>10809
+		//#if MC>11202
 		if (CarpetClient.CARPET_CHANNEL.equals(customPayloadS2CPacket.getChannel())) {
 		//#else
 		//$$ if (CarpetClient.CARPET_CHANNEL.toString().equals(customPayloadS2CPacket.getChannel())) {

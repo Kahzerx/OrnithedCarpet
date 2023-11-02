@@ -156,6 +156,27 @@ public class SettingsManager {
 		server = null;
 	}
 
+	//#if MC>=11300
+	public void inspectClientsideCommand(CommandSourceStack source, String string) {
+	//#else
+	//$$ public void inspectClientsideCommand(CommandSource source, String string) {
+	//#endif
+		if (string.startsWith("/" + identifier + " ")) {
+			String[] res = string.split("\\s+", 3);
+			if (res.length == 3) {
+				String rule = res[1];
+				String strOption = res[2];
+				if (rules.containsKey(rule) && rules.get(rule).canBeToggledClientSide()) {
+					try {
+						rules.get(rule).set(source, strOption);
+					} catch (InvalidRuleValueException e) {
+						e.notifySource(rule, source);
+					}
+				}
+			}
+		}
+	}
+
 	private boolean matchesSubStr(String string, String string2) {
 		for(int i = 0; !string2.startsWith(string, i); ++i) {
 			i = string2.indexOf(95, i);

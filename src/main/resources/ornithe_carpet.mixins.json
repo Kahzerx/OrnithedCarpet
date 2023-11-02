@@ -16,7 +16,9 @@
     "server.PlayerManagerMixin"
   ],
   "client": [
-    "protocol.ClientPlayNetworkHandlerMixin"
+    "protocol.ClientPlayNetworkHandlerMixin",
+    "protocol.LocalClientPlayerEntityMixin",
+    "protocol.MinecraftMixin"
   ],
   "server": [
   ],
