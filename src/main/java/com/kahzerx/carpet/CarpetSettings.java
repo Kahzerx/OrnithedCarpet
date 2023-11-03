@@ -3,6 +3,7 @@ package com.kahzerx.carpet;
 import com.kahzerx.carpet.api.settings.CarpetRule;
 import com.kahzerx.carpet.api.settings.Rule;
 import com.kahzerx.carpet.api.settings.Validator;
+import com.kahzerx.carpet.api.settings.Validators;
 import com.kahzerx.carpet.utils.Translations;
 //#if MC>=11300
 import net.minecraft.server.command.source.CommandSourceStack;
@@ -138,4 +139,19 @@ public class CarpetSettings {
 		validators = PushLimitLimits.class
 	)
 	public static int railPowerLimit = 9;
+
+	@Rule(
+		desc = "Creative No Clip",
+		extra = {
+			"On servers it needs to be set on both ",
+			"client and server to function properly.",
+			"Has no effect when set on the server only",
+			"Can allow to phase through walls",
+			"if only set on the carpet client side",
+			"but requires some trapdoor magic to",
+			"allow the player to enter blocks"
+		},
+		categories = {CREATIVE, CLIENT}
+	)
+	public static boolean creativeNoClip = false;
 }

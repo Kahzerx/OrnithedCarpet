@@ -6,6 +6,9 @@
   "mixins": [
     "protocol.CustomPayloadC2SPacketMixin",
     "protocol.ServerPlayNetworkHandlerMixin",
+    "rule.creativeNoClip.EntityMixin",
+    "rule.creativeNoClip.PlayerEntityMixin",
+    "rule.creativeNoClip.WorldMixin",
     "rule.persistentParrots.PlayerEntityMixin",
     "rule.portalDelay.PlayerEntityMixin",
     "rule.pushLimit.PistonMoveStructureResolverMixin",
@@ -19,7 +22,9 @@
   "client": [
     "protocol.ClientPlayNetworkHandlerMixin",
     "protocol.LocalClientPlayerEntityMixin",
-    "protocol.MinecraftMixin"
+    "protocol.MinecraftMixin",
+    "rule.creativeNoClip.LocalClientPlayerEntityMixin",
+    "rule.creativeNoClip.WorldRendererMixin"
   ],
   "server": [
   ],
