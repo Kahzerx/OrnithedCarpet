@@ -106,7 +106,7 @@ public class CarpetSettings {
 	public static boolean persistentParrots = false;
 	//#endif
 
-	@Rule( desc = "Players absorb XP instantly, without delay", categories = CREATIVE )
+	@Rule(desc = "Players absorb XP instantly, without delay", categories = CREATIVE)
 	public static boolean xpNoCooldown = false;
 
 	private static class PushLimitLimits extends Validator<Integer> {
@@ -154,4 +154,7 @@ public class CarpetSettings {
 		categories = {CREATIVE, CLIENT}
 	)
 	public static boolean creativeNoClip = false;
+
+	@Rule(desc = "Explosions won't destroy blocks", categories = {CREATIVE, TNT})
+	public static boolean explosionNoBlockDamage = false;
 }

@@ -9,6 +9,7 @@
     "rule.creativeNoClip.EntityMixin",
     "rule.creativeNoClip.PlayerEntityMixin",
     "rule.creativeNoClip.WorldMixin",
+    "rule.explosionNoBlockDamage.ExplosionMixin",
     "rule.persistentParrots.PlayerEntityMixin",
     "rule.portalDelay.PlayerEntityMixin",
     "rule.pushLimit.PistonMoveStructureResolverMixin",
