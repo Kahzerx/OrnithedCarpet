@@ -157,4 +157,7 @@ public class CarpetSettings {
 
 	@Rule(desc = "Explosions won't destroy blocks", categories = {CREATIVE, TNT})
 	public static boolean explosionNoBlockDamage = false;
+
+	@Rule(desc = "TNT doesn't update when placed against a power source", categories = {CREATIVE, TNT})
+	public static boolean tntDoNotUpdate = false;
 }
