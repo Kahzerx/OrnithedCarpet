@@ -118,7 +118,7 @@ public class SettingsManager {
 				CommandHelper.canUseCommand(source, CarpetSettings.carpetCommandPermissionLevel) && !locked());
 
 		literalargumentbuilder.
-				executes((context)-> listAllSettings(context.getSource())).
+				executes((c) -> listAllSettings(c.getSource())).
 				then(CommandManager.literal("list").
 						executes((c) -> listSettings(c.getSource(), String.format(tr(TranslationKeys.ALL_MOD_SETTINGS), fancyName), getRulesSorted())).
 						then(CommandManager.argument("tag", StringArgumentType.word()).
@@ -207,7 +207,7 @@ public class SettingsManager {
 	}
 
 	private Path getFile() {
-		//#if MC>11202
+		//#if MC>10809
 		return this.server.getWorldStorageSource().getFile(this.server.getWorldSaveName(), ".").toPath().resolve(this.identifier + ".conf");
 		//#else
 		//$$ return this.server.getWorldStorageSource().get(this.server.getWorldSaveName(), false).getDir().toPath().resolve(this.identifier + ".conf");
@@ -630,6 +630,8 @@ public class SettingsManager {
 	//$$		if (strings.length == 1) {
 	//$$			if ("list".equalsIgnoreCase(strings[0])) {
 	//$$				this.sm.listSettings(commandSource, String.format(tr(TranslationKeys.ALL_MOD_SETTINGS), this.sm.fancyName), this.sm.getRulesSorted());
+	//$$			} else if (strings[0].equalsIgnoreCase("setDefault") || strings[0].equalsIgnoreCase("removeDefault")) {
+	//$$				return;
 	//$$			} else {
 	//$$				CarpetRule<?> rule = this.sm.contextRule(strings[0]);
 	//$$				if (rule != null) {
@@ -642,12 +644,31 @@ public class SettingsManager {
 	//$$		if (strings.length == 2) {
 	//$$			if ("list".equalsIgnoreCase(strings[0]) && Iterables.contains(this.sm.getCategories(), strings[1])) {
 	//$$				this.sm.listSettings(commandSource, String.format(tr(TranslationKeys.MOD_SETTINGS_MATCHING), this.sm.fancyName, RuleHelper.translatedCategory(this.sm.identifier(), strings[1])), this.sm.getRulesMatching(strings[1]));
+	//$$			} else if (strings[0].equalsIgnoreCase("setDefault")) {
+	//$$				return;
+	//$$			} else if (strings[0].equalsIgnoreCase("removeDefault")) {
+	//$$				CarpetRule<?> rule = this.sm.contextRule(strings[1]);
+	//$$				if (rule != null) {
+	//$$					this.sm.removeDefault(commandSource, rule);
+	//$$				} else {
+	//$$					Messenger.c("rb " + tr(TranslationKeys.UNKNOWN_RULE) + ": " + strings[1]);
+	//$$				}
 	//$$			} else {
 	//$$				CarpetRule<?> rule = this.sm.contextRule(strings[0]);
 	//$$				if (rule != null) {
 	//$$					this.sm.setRule(commandSource, rule, strings[1]);
 	//$$				} else {
 	//$$					Messenger.c("rb " + tr(TranslationKeys.UNKNOWN_RULE) + ": " + strings[0]);
+	//$$				}
+	//$$			}
+	//$$		}
+	//$$		if (strings.length == 3) {
+	//$$			if (strings[0].equalsIgnoreCase("setDefault")) {
+	//$$				CarpetRule<?> rule = this.sm.contextRule(strings[1]);
+	//$$				if (rule != null) {
+	//$$					this.sm.setDefault(commandSource, rule, strings[2]);
+	//$$				} else {
+	//$$					Messenger.c("rb " + tr(TranslationKeys.UNKNOWN_RULE) + ": " + strings[1]);
 	//$$				}
 	//$$			}
 	//$$		}
