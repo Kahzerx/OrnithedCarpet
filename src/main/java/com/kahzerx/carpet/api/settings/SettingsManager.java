@@ -122,7 +122,7 @@ public class SettingsManager {
 				then(CommandManager.literal("list").
 						executes((c) -> listSettings(c.getSource(), String.format(tr(TranslationKeys.ALL_MOD_SETTINGS), fancyName), getRulesSorted())).
 						then(CommandManager.argument("tag", StringArgumentType.word()).
-								suggests((c, b)->suggest(getCategories(), b)).
+								suggests((c, b) -> suggest(getCategories(), b)).
 								executes((c) -> listSettings(c.getSource(), String.format(tr(TranslationKeys.MOD_SETTINGS_MATCHING), fancyName, RuleHelper.translatedCategory(identifier(),StringArgumentType.getString(c, "tag"))), getRulesMatching(StringArgumentType.getString(c, "tag")))))).
 				then(CommandManager.literal("removeDefault").
 						requires(s -> !locked()).
@@ -141,7 +141,7 @@ public class SettingsManager {
 						requires(s -> !locked() ).
 						executes((c) -> displayRuleMenu(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")))).
 						then(CommandManager.argument("value", StringArgumentType.greedyString()).
-								suggests((c, b)-> suggest(contextRule(StringArgumentType.getString(c, "rule")).suggestions(), b)).
+								suggests((c, b) -> suggest(contextRule(StringArgumentType.getString(c, "rule")).suggestions(), b)).
 								executes((c) -> setRule(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")), StringArgumentType.getString(c, "value")))));
 
 		dispatcher.register(literalargumentbuilder);
@@ -662,6 +662,24 @@ public class SettingsManager {
 	//$$		return CommandHelper.canUseCommand(commandSource, CarpetSettings.carpetCommandPermissionLevel) && !this.sm.locked();
 	//$$	}
 	//$$
+	//$$ private List<String> smartSuggestion(List<String> stream, String key) {
+	//$$	List<String> regularSuggestionList = new ArrayList<>();
+	//$$	List<String> smartSuggestionList = new ArrayList<>();
+	//$$	stream.forEach((listItem) -> {
+	//$$		List<String> words = Arrays.stream(listItem.split("(?<!^)(?=[A-Z])")).map(s -> s.toLowerCase(Locale.ROOT)).collect(Collectors.toList());
+	//$$		List<String> prefixes = new ArrayList<>(words.size());
+	//$$		for (int i = 0; i < words.size(); i++)
+	//$$			prefixes.add(String.join("", words.subList(i, words.size())));
+	//$$		if (prefixes.stream().anyMatch(s -> s.startsWith(key))) {
+	//$$			smartSuggestionList.add(listItem);
+	//$$		}
+	//$$		if (this.sm.matchesSubStr(key, listItem.toLowerCase(Locale.ROOT))) {
+	//$$			regularSuggestionList.add(listItem);
+	//$$		}
+	//$$	});
+	//$$	return regularSuggestionList.isEmpty() ? smartSuggestionList : regularSuggestionList;
+	//$$ }
+	//$$
 	//$$	@Override
 		//#if MC>10809
 	//$$	public List<String> getSuggestions(MinecraftServer minecraftServer, CommandSource commandSource, String[] strings, @Nullable BlockPos blockPos) {
@@ -676,32 +694,29 @@ public class SettingsManager {
 	//$$		if (strings.length == 1) {
 	//$$			List<String> stream = this.sm.getRulesSorted().stream().map(CarpetRule::name).collect(Collectors.toList());
 	//$$ 			stream.add("list");
-	//$$			List<String> regularSuggestionList = new ArrayList<>();
-	//$$			List<String> smartSuggestionList = new ArrayList<>();
-	//$$			stream.forEach((listItem) -> {
-	//$$				List<String> words = Arrays.stream(listItem.split("(?<!^)(?=[A-Z])")).map(s -> s.toLowerCase(Locale.ROOT)).collect(Collectors.toList());
-	//$$				List<String> prefixes = new ArrayList<>(words.size());
-	//$$				for (int i = 0; i < words.size(); i++)
-	//$$					prefixes.add(String.join("", words.subList(i, words.size())));
-	//$$				if (prefixes.stream().anyMatch(s -> s.startsWith(strings[0]))) {
-	//$$					smartSuggestionList.add(listItem);
-	//$$				}
-	//$$				if (this.sm.matchesSubStr(strings[0], listItem.toLowerCase(Locale.ROOT))) {
-	//$$					regularSuggestionList.add(listItem);
-	//$$				}
-	//$$			});
-	//$$			List<String> filteredSuggestionList = regularSuggestionList.isEmpty() ? smartSuggestionList : regularSuggestionList;
-	//$$			return new ArrayList<>(filteredSuggestionList);
+	//$$			stream.add("removeDefault");
+	//$$			stream.add("setDefault");
+	//$$			return this.smartSuggestion(stream, strings[0]);
 	//$$		}
 	//$$		if (strings.length == 2) {
 	//$$ 			if (strings[0].equalsIgnoreCase("list")) {
 	//$$				List<String> categories = new ArrayList<>();
 	//$$				this.sm.getCategories().forEach(categories::add);
-	//$$				return categories;
+	//$$				return this.smartSuggestion(categories, strings[1]);
+	//$$			} else if (strings[0].equalsIgnoreCase("setDefault") || strings[0].equalsIgnoreCase("removeDefault")) {
+	//$$				return this.smartSuggestion(this.sm.getRulesSorted().stream().map(CarpetRule::name).collect(Collectors.toList()), strings[1]);
 	//$$			} else {
 	//$$ 				CarpetRule<?> rule = this.sm.contextRule(strings[0]);
 	//$$				if (rule != null) {
-	//$$					return new ArrayList<>(this.sm.contextRule(strings[0]).suggestions());
+	//$$					return this.smartSuggestion(new ArrayList<>(rule.suggestions()), strings[1]);
+	//$$				}
+	//$$			}
+	//$$		}
+	//$$		if (strings.length == 3) {
+	//$$			if (strings[0].equalsIgnoreCase("setDefault")) {
+	//$$				CarpetRule<?> rule = this.sm.contextRule(strings[1]);
+	//$$				if (rule != null) {
+	//$$					return this.smartSuggestion(new ArrayList<>(rule.suggestions()), strings[2]);
 	//$$				}
 	//$$			}
 	//$$		}
