@@ -1,31 +1,122 @@
-# Ornithe Template Mod
+# Ornithed Carpet
 
-The official Ornithe template mod. You can use it as a template for your own mods!
+Carpet mod for 1.13.2-1.7.10
 
-## Usage
+## Supported Versions
 
-In order to use this mod as a template:
+| version |  supported  |
+|:-------:|:-----------:|
+| 1.13.2  |      ✔      |
+| 1.12.2  |      ✔      |
+| 1.11.2  |      ✔      |
+| 1.10.2  |      ✔      |
+|  1.9.4  |      ✔      |
+|  1.8.9  |      ✔      |
+| 1.7.10  |      ✔      |
 
-1. Create a new repository from this template with `Use this template`
-2. Clone the recently-created repo on your PC
-3. Make the necessary changes in order to make it yours:
-    - Update `gradle.properties` in order to use your 
-        - Update your mod's Maven group and mod ID
-            - If you don't know which Maven group to use, and you are planning to host the mod's source code on GitHub, use `io.github.<Your_Username_Here>`
-        - Update your mod's dependencies
-            - Check [our meta](https://meta.ornithemc.net/v3/versions) for the latest available versions.
-    - Update `fabric.mod.json` in order to reflect your mod's metadata
-        - If you are planning to include (jar-in-jar) a mod, don't forget to declare its dependency on it!
-        - The icon provided here is a placeholder one. If you aren't able to replace it yet, you can delete it and remove the "icon" property
-    - Create a LICENSE file for this mod! If you don't know which license to use, check out [here](https://choosealicense.com/).
-        - If you use `LICENSE.md`, don't forget to update the buildscript in order to use that file name!
-        - In `fabric.mod.json`, don't forget to put the license's [SPDX identifier](https://spdx.org/licenses/) under the `"license"` property`.
-        - The GPLv3 and AGPLv3 are not valid mod licenses, so you can use almost any license except for those.
-    - Update the Java sub-directory structure so it reflects your Maven group
-4. The mod is now ready to be worked on!
+## Features
 
-## License
+**This mod is compatible with fabric-carpet protocol**
 
-This template on the OrnitheMC GitHub is licensed under the [Creative Common Zero v1.0 license](./LICENSE-TEMPLATE.md).
+## Rules
 
-Mods created with this template are not automatically licensed under the CC0, and are not required to give any kind of credit back to OrnitheMC for this template.
+### language
+
+Sets the language for Carpet
+
+- Type: `String`
+- Default: `en_us`
+- Suggestions: `en_us`
+- Categories: `FEATURE`
+
+### carpetCommandPermissionLevel
+
+Carpet command permission level
+
+- Type: `String`
+- Default: `ops`
+- Suggestions: `ops`, `2`, `4`
+- Categories: `CREATIVE`
+
+### portalCreativeDelay
+
+Amount of delay ticks to use a nether portal in creative
+
+- Type: `Integer`
+- Default: `1`
+- Suggestions: `1`, `40`, `80`, `72000`
+- Categories: `SURVIVAL`
+
+### portalSurvivalDelay
+
+Amount of delay ticks to use a nether portal in survival
+
+- Type: `Integer`
+- Default: `80`
+- Suggestions: `1`, `40`, `80`, `72000`
+- Categories: `SURVIVAL`
+
+### persistentParrots
+
+Parrots don't get of your shoulders until you receive proper damage
+
+- Type: `Boolean`
+- Default: `false`
+- Suggestions: `true`, `false`
+- Categories: `SURVIVAL`, `FEATURE`
+- Versions: `1.12+`
+
+### xpNoCooldown
+
+Players absorb XP instantly, without delay
+
+- Type: `Boolean`
+- Default: `false`
+- Suggestions: `true`, `false`
+- Categories: `CREATIVE`
+
+### pushLimit
+
+Customizable piston push limit
+
+- Type: `Integer`
+- Default: `12`
+- Suggestions: `10`, `12`, `14`, `100`
+- Categories: `CREATIVE`
+
+### railPowerLimit
+
+Customizable powered rail power range
+
+- Type: `Integer`
+- Default: `9`
+- Suggestions: `9`, `15`, `30`
+- Categories: `CREATIVE`
+
+### creativeNoClip
+
+Creative No Clip
+
+- Type: `Boolean`
+- Default: `false`
+- Suggestions: `true`, `false`
+- Categories: `CREATIVE`, `CLIENT`
+
+### explosionNoBlockDamage
+
+Explosions won't destroy blocks
+
+- Type: `Boolean`
+- Default: `false`
+- Suggestions: `true`, `false`
+- Categories: `CREATIVE`, `TNT`
+
+### tntDoNotUpdate
+
+TNT doesn't update when placed against a power source
+
+- Type: `Boolean`
+- Default: `false`
+- Suggestions: `true`, `false`
+- Categories: `CREATIVE`, `TNT`
+
