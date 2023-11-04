@@ -27,4 +27,4 @@ jobs:
           prerelease: false
           automatic_release_tag: 0.1.0
           files: |
-            versions/*/build/libs/*.jar
+            versions/*/build/libs/*.jar | grep -v '[0-9]\.jar'
