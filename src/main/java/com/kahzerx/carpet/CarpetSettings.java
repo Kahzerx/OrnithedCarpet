@@ -159,7 +159,4 @@ public class CarpetSettings {
 
 	@Rule(desc = "TNT doesn't update when placed against a power source", categories = {CREATIVE, TNT})
 	public static boolean tntDoNotUpdate = false;
-
-	@Rule(desc = "XP orbs combine with other into bigger orbs", categories = FEATURE)
-	public static boolean combineXPOrbs = false;
 }

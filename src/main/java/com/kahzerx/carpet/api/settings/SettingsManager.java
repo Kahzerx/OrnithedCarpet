@@ -7,6 +7,12 @@ import com.kahzerx.carpet.utils.CommandHelper;
 import com.kahzerx.carpet.utils.Messenger;
 import com.kahzerx.carpet.utils.TranslationKeys;
 import com.kahzerx.carpet.utils.Translations;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 //#if MC>=11300
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -28,6 +34,8 @@ import java.util.stream.Stream;
 //$$ import net.minecraft.server.command.Command;
 //$$ import org.jetbrains.annotations.NotNull;
 //#endif
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 //#if MC>=11300
 import net.minecraft.server.command.handler.CommandManager;
@@ -112,26 +120,26 @@ public class SettingsManager {
 		literalargumentbuilder.
 				executes((context)-> listAllSettings(context.getSource())).
 				then(CommandManager.literal("list").
-						executes( (c) -> listSettings(c.getSource(), String.format(tr(TranslationKeys.ALL_MOD_SETTINGS), fancyName), getRulesSorted())).
+						executes((c) -> listSettings(c.getSource(), String.format(tr(TranslationKeys.ALL_MOD_SETTINGS), fancyName), getRulesSorted())).
 						then(CommandManager.argument("tag", StringArgumentType.word()).
-								suggests( (c, b)->suggest(getCategories(), b)).
-								executes( (c) -> listSettings(c.getSource(), String.format(tr(TranslationKeys.MOD_SETTINGS_MATCHING), fancyName, RuleHelper.translatedCategory(identifier(),StringArgumentType.getString(c, "tag"))), getRulesMatching(StringArgumentType.getString(c, "tag")))))).
-//				then(LiteralArgumentBuilder.literal("removeDefault").
-//						requires(s -> !locked()).
-//						then(RequiredArgumentBuilder.argument("rule", StringArgumentType.word()).
-//								suggests( (c, b) -> suggestMatchingContains(getRulesSorted().stream().map(CarpetRule::name), b)).
-//								executes((c) -> removeDefault(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")))))).  // TODO
-//				then(LiteralArgumentBuilder.literal("setDefault").
-//						requires(s -> !locked()).
-//						then(RequiredArgumentBuilder.argument("rule", StringArgumentType.word()).
-//								suggests( (c, b) -> suggestMatchingContains(getRulesSorted().stream().map(CarpetRule::name), b)).
-//								then(RequiredArgumentBuilder.argument("value", StringArgumentType.greedyString()).
-//										suggests((c, b)-> suggest(contextRule(StringArgumentType.getString(c, "rule")).suggestions(), b)).
-//										executes((c) -> setDefault(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")), StringArgumentType.getString(c, "value")))))).  // TODO
+								suggests((c, b)->suggest(getCategories(), b)).
+								executes((c) -> listSettings(c.getSource(), String.format(tr(TranslationKeys.MOD_SETTINGS_MATCHING), fancyName, RuleHelper.translatedCategory(identifier(),StringArgumentType.getString(c, "tag"))), getRulesMatching(StringArgumentType.getString(c, "tag")))))).
+				then(CommandManager.literal("removeDefault").
+						requires(s -> !locked()).
+						then(CommandManager.argument("rule", StringArgumentType.word()).
+								suggests((c, b) -> suggestMatchingContains(getRulesSorted().stream().map(CarpetRule::name), b)).
+								executes((c) -> removeDefault(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")))))).
+				then(CommandManager.literal("setDefault").
+						requires(s -> !locked()).
+						then(CommandManager.argument("rule", StringArgumentType.word()).
+								suggests((c, b) -> suggestMatchingContains(getRulesSorted().stream().map(CarpetRule::name), b)).
+								then(CommandManager.argument("value", StringArgumentType.greedyString()).
+										suggests((c, b) -> suggest(contextRule(StringArgumentType.getString(c, "rule")).suggestions(), b)).
+										executes((c) -> setDefault(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")), StringArgumentType.getString(c, "value")))))).
 				then(CommandManager.argument("rule", StringArgumentType.word()).
-						suggests( (c, b) -> suggestMatchingContains(getRulesSorted().stream().map(CarpetRule::name), b)).
+						suggests((c, b) -> suggestMatchingContains(getRulesSorted().stream().map(CarpetRule::name), b)).
 						requires(s -> !locked() ).
-						executes( (c) -> displayRuleMenu(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")))).
+						executes((c) -> displayRuleMenu(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")))).
 						then(CommandManager.argument("value", StringArgumentType.greedyString()).
 								suggests((c, b)-> suggest(contextRule(StringArgumentType.getString(c, "rule")).suggestions(), b)).
 								executes((c) -> setRule(c.getSource(), contextRule(StringArgumentType.getString(c, "rule")), StringArgumentType.getString(c, "value")))));
@@ -150,9 +158,178 @@ public class SettingsManager {
 	}
 	//#endif
 
+	//#if MC>=11300
+	private int setDefault(CommandSourceStack source, CarpetRule<?> rule, String stringValue) {
+	//#else
+	//$$ private int setDefault(CommandSource source, CarpetRule<?> rule, String stringValue) {
+	//#endif
+		if (locked()) {
+			return 0;
+		}
+		if (!rules.containsKey(rule.name())) {
+			return 0;
+		}
+		ConfigReadResult conf = readSettingsFromConf(getFile());
+		conf.getRuleMap().put(rule.name(), stringValue);
+		writeSettingsToConf(conf); // this may feels weird, but if conf
+		// is locked, it will never reach this point.
+		try {
+			rule.set(source, stringValue);
+			Messenger.m(source ,"gi "+String.format(tr(TranslationKeys.DEFAULT_SET), RuleHelper.translatedName(rule), stringValue));
+		} catch (InvalidRuleValueException e) {
+			e.notifySource(rule.name(), source);
+		}
+		return 1;
+	}
+
+	//#if MC>=11300
+	private int removeDefault(CommandSourceStack source, CarpetRule<?> rule) {
+	//#else
+	//$$ private int removeDefault(CommandSource source, CarpetRule<?> rule) {
+	//#endif
+		if (locked) {
+			return 0;
+		}
+		if (!rules.containsKey(rule.name())) {
+			return 0;
+		}
+		ConfigReadResult conf = readSettingsFromConf(getFile());
+		conf.getRuleMap().remove(rule.name());
+		writeSettingsToConf(conf);
+		RuleHelper.resetToDefault(rules.get(rule.name()), source);
+		Messenger.m(source ,"gi "+String.format(tr(TranslationKeys.DEFAULT_REMOVED), RuleHelper.translatedName(rule)));
+		return 1;
+	}
+
 	public void attachServer(MinecraftServer server) {
 		this.server = server;
-		// TODO loadConfigurationFromConf();
+		loadConfigurationFromConf();
+	}
+
+	private Path getFile() {
+		//#if MC>11202
+		return this.server.getWorldStorageSource().getFile(this.server.getWorldSaveName(), ".").toPath().resolve(this.identifier + ".conf");
+		//#else
+		//$$ return this.server.getWorldStorageSource().get(this.server.getWorldSaveName(), false).getDir().toPath().resolve(this.identifier + ".conf");
+		//#endif
+	}
+
+	private void loadConfigurationFromConf() {
+		for (CarpetRule<?> rule : rules.values()) {
+			//#if MC>11202
+			RuleHelper.resetToDefault(rule, server.createCommandSourceStack());
+			//#else
+			//$$ RuleHelper.resetToDefault(rule, server);
+			//#endif
+		}
+		ConfigReadResult conf = readSettingsFromConf(this.getFile());
+		if (conf.isLocked()) {
+			CarpetSettings.LOG.info("[CM]: "+fancyName+" features are locked by the administrator");
+			disableBooleanCommands();
+		}
+		int loadedCount = 0;
+		for (String key: conf.getRuleMap().keySet()) {
+			try {
+				//#if MC>11202
+				rules.get(key).set(server.createCommandSourceStack(), conf.getRuleMap().get(key));
+				//#else
+				//$$ rules.get(key).set(server, conf.getRuleMap().get(key));
+				//#endif
+				loadedCount++;
+			} catch (InvalidRuleValueException exc) {
+				CarpetSettings.LOG.error("[CM Error]: Failed to load setting: " + key, exc);
+			}
+		}
+		if (loadedCount > 0) {
+			CarpetSettings.LOG.info("[CM] Loaded " + loadedCount + " settings from " + identifier + ".conf");
+		}
+		locked = conf.isLocked();
+	}
+
+	private void disableBooleanCommands() {
+		for (CarpetRule<?> rule : rules.values()) {
+			if (!rule.categories().contains(RuleCategory.COMMAND)) {
+				continue;
+			}
+			try {
+				if (rule.suggestions().contains("false")) {
+					//#if MC>11202
+					rule.set(server.createCommandSourceStack(), "false");
+					//#else
+					//$$ rule.set(server, "false");
+					//#endif
+				}
+				else {
+					CarpetSettings.LOG.warn("Couldn't disable command rule "+ rule.name() + ": it doesn't suggest false as a valid option");
+				}
+			} catch (InvalidRuleValueException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+	}
+
+	private ConfigReadResult readSettingsFromConf(Path path) {
+		try (BufferedReader reader = Files.newBufferedReader(path)) {
+			String line;
+			boolean confLocked = false;
+			Map<String, String> result = new HashMap<>();
+			while ((line = reader.readLine()) != null) {
+				line = line.replaceAll("[\\r\\n]", "");
+				if ("locked".equalsIgnoreCase(line)) {
+					confLocked = true;
+				}
+				String[] fields = line.split("\\s+",2);
+				if (fields.length > 1) {
+					if (result.isEmpty() && fields[0].startsWith("#") || fields[1].startsWith("#")) {
+						continue;
+					}
+					if (!rules.containsKey(fields[0])) {
+						CarpetSettings.LOG.error("[CM]: "+fancyName+" Setting " + fields[0] + " is not a valid rule - ignoring...");
+						continue;
+					}
+					result.put(fields[0], fields[1]);
+				}
+			}
+			return new ConfigReadResult(result, confLocked);
+		} catch (NoSuchFileException e) {
+			if (path.equals(getFile()) && FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+				Path defaultsPath = FabricLoader.getInstance().getConfigDir().resolve("carpet/default_"+identifier+".conf");
+				try {
+					if (Files.notExists(defaultsPath)) {
+						Files.createDirectories(defaultsPath.getParent());
+						Files.createFile(defaultsPath);
+						try (BufferedWriter fw = Files.newBufferedWriter(defaultsPath)) {
+							fw.write("# This is " + fancyName + "'s default configuration file");
+							fw.newLine();
+							fw.write("# Settings specified here will be used when a world doesn't have a config file, but they will be completely ignored once the world has one.");
+							fw.newLine();
+						}
+					}
+					return readSettingsFromConf(defaultsPath);
+				} catch (IOException e2) {
+					CarpetSettings.LOG.error("Exception when loading fallback default config: ", e2);
+				}
+			}
+			return new ConfigReadResult(new HashMap<>(), false);
+		}
+		catch (IOException e) {
+			CarpetSettings.LOG.error("Exception while loading Carpet rules from config", e);
+			return new ConfigReadResult(new HashMap<>(), false);
+		}
+	}
+
+	private void writeSettingsToConf(ConfigReadResult data) {
+		if (locked) {
+			return;
+		}
+		try (BufferedWriter fw = Files.newBufferedWriter(getFile())) {
+			for (String key: data.getRuleMap().keySet()) {
+				fw.write(key + " " + data.getRuleMap().get(key));
+				fw.newLine();
+			}
+		} catch (IOException e) {
+			CarpetSettings.LOG.error("[CM]: failed write "+identifier+".conf config file", e);
+		}
 	}
 
 	public void detachServer() {
@@ -405,7 +582,6 @@ public class SettingsManager {
 		observers.forEach(observer -> observer.ruleChanged(source, rule, userInput));
 		staticObservers.forEach(observer -> observer.ruleChanged(source, rule, userInput));
 		ServerNetworkHandler.updateRuleWithConnectedClients(rule);
-//		ServerNetworkHandler.updateRuleWithConnectedClients(rule);  // TODO
 	}
 
 	static class ConfigReadResult {
