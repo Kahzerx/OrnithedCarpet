@@ -210,7 +210,7 @@ public class SettingsManager {
 		//#if MC>10809
 		return this.server.getWorldStorageSource().getFile(this.server.getWorldSaveName(), ".").toPath().resolve(this.identifier + ".conf");
 		//#else
-		//$$ return this.server.getWorldStorageSource().get(this.server.getWorldSaveName(), false).getDir().toPath().resolve(this.identifier + ".conf");
+		//$$ return this.server.getFile(this.server.getWorldSaveName()).toPath().resolve(this.identifier + ".conf");
 		//#endif
 	}
 
