@@ -3,7 +3,6 @@ package com.kahzerx.carpet;
 import com.kahzerx.carpet.api.settings.CarpetRule;
 import com.kahzerx.carpet.api.settings.Rule;
 import com.kahzerx.carpet.api.settings.Validator;
-import com.kahzerx.carpet.api.settings.Validators;
 import com.kahzerx.carpet.utils.Translations;
 //#if MC>=11300
 import net.minecraft.server.command.source.CommandSourceStack;
@@ -160,4 +159,7 @@ public class CarpetSettings {
 
 	@Rule(desc = "TNT doesn't update when placed against a power source", categories = {CREATIVE, TNT})
 	public static boolean tntDoNotUpdate = false;
+
+	@Rule(desc = "XP orbs combine with other into bigger orbs", categories = FEATURE)
+	public static boolean combineXPOrbs = false;
 }
