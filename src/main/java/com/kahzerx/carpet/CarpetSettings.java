@@ -3,7 +3,9 @@ package com.kahzerx.carpet;
 import com.kahzerx.carpet.api.settings.CarpetRule;
 import com.kahzerx.carpet.api.settings.Rule;
 import com.kahzerx.carpet.api.settings.Validator;
+import com.kahzerx.carpet.fakes.ChunkMapAccess;
 import com.kahzerx.carpet.utils.Translations;
+import net.minecraft.entity.living.player.PlayerEntity;
 //#if MC>=11300
 import net.minecraft.server.command.source.CommandSourceStack;
 //#else
@@ -12,8 +14,12 @@ import net.minecraft.server.command.source.CommandSourceStack;
 //#if MC<=10809
 //$$ import net.minecraft.server.MinecraftServer;
 //#endif
+import net.minecraft.server.entity.living.player.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 
 import static com.kahzerx.carpet.api.settings.RuleCategory.*;
 
@@ -86,6 +92,9 @@ public class CarpetSettings {
 			return "You must choose a value from 1 to 72000";
 		}
 	}
+
+
+
 	@Rule(
 			desc = "Amount of delay ticks to use a nether portal in creative",
 			options = {"1", "40", "80", "72000"},
@@ -248,4 +257,40 @@ public class CarpetSettings {
 		categories = { CREATIVE, SURVIVAL, CLIENT }
 	)
 	public static boolean smoothClientAnimations = false;
+
+	//#if MC>=10900
+	private static class CreativePlayersLoadChunksValidator extends Validator<Boolean> {
+		@Override
+		//#if MC>=11300
+		public Boolean validate(CommandSourceStack source, CarpetRule<Boolean> currentRule, Boolean newValue, String userInput) {
+			//#else
+			//$$ public Boolean validate(CommandSource source, CarpetRule<Boolean> currentRule, Boolean newValue, String userInput) {
+			//#endif
+
+			//#if MC>=11300
+			for(ServerWorld world : source.getServer().getWorlds()) {
+			//#else
+			//$$ for(ServerWorld world : source.getServer().worlds) {
+			//#endif
+				ChunkMapAccess access = (ChunkMapAccess) world.getChunkMap();
+				for(PlayerEntity player : world.players) {
+					if(newValue) {
+						access.syncChunks((ServerPlayerEntity) player);
+					}else {
+						access.unloadNearestChunks((ServerPlayerEntity) player);
+					}
+
+				}
+			}
+			return newValue;
+		}
+	}
+
+	@Rule(
+		desc = "Creative players won't load any chunks, except the one they are in",
+		categories = {CREATIVE, FEATURE},
+		validators = CreativePlayersLoadChunksValidator.class
+	)
+	public static boolean creativePlayersLoadChunks = true;
+	//#endif
 }
